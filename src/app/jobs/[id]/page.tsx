@@ -45,21 +45,22 @@ export default async function JobDetailPage({
               <p className="mt-2 text-gray-600">📍 {job.location}</p>
             </div>
             {isOwner && (
-            <div className="flex gap-2">
-              <Link
-                href={`/jobs/${job.id}/applications`}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
-              >
-                👥 متقاضیان ({job._count.applications})
-              </Link>
-              <Link
-                href={`/jobs/${job.id}/edit`}
-                className="rounded-md bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200"
-            >
-              ✏️ ویرایش
-            </Link>
+              <div className="flex gap-2">
+                <Link
+                  href={`/jobs/${job.id}/applications`}
+                  className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+                >
+                  👥 متقاضیان ({job._count.applications})
+                </Link>
+                <Link
+                  href={`/jobs/${job.id}/edit`}
+                  className="rounded-md bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200"
+                >
+                  ✏️ ویرایش
+                </Link>
+              </div>
+            )}
           </div>
-          )}
 
           {/* Tags */}
           <div className="mt-4 flex flex-wrap gap-2">
@@ -73,7 +74,11 @@ export default async function JobDetailPage({
                   : "bg-gray-100 text-gray-700"
               }`}
             >
-              {job.status === "OPEN" ? "باز" : job.status === "DRAFT" ? "پیش‌نویس" : "بسته"}
+              {job.status === "OPEN"
+                ? "باز"
+                : job.status === "DRAFT"
+                ? "پیش‌نویس"
+                : "بسته"}
             </span>
             {job.salary && (
               <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm text-yellow-700">
@@ -93,7 +98,9 @@ export default async function JobDetailPage({
           {/* Meta */}
           <div className="mt-6 border-t pt-4 text-sm text-gray-500">
             <p>ثبت‌کننده: {job.recruiter.name}</p>
-            <p>تاریخ ثبت: {new Date(job.createdAt).toLocaleDateString("fa-IR")}</p>
+            <p>
+              تاریخ ثبت: {new Date(job.createdAt).toLocaleDateString("fa-IR")}
+            </p>
             <p>تعداد متقاضیان: {job._count.applications}</p>
           </div>
 
@@ -104,6 +111,7 @@ export default async function JobDetailPage({
             </div>
           )}
 
+          {/* Login Link */}
           {!session?.user && (
             <div className="mt-6 border-t pt-4">
               <Link
