@@ -3,17 +3,15 @@ import { NextResponse } from "next/server"
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth
-  const isAuthPage = req.nextUrl.pathname.startsWith("/login") || 
-                     req.nextUrl.pathname.startsWith("/register")
-  const isDashboard = req.nextUrl.pathname.startsWith("/dashboard")
+  const { pathname } = req.nextUrl
 
   // اگه کاربر لاگین کرده و می‌خواد بره login/register → ببرش dashboard
-  if (isLoggedIn && isAuthPage) {
+  if (isLoggedIn && (pathname === "/login" || pathname === "/register")) {
     return NextResponse.redirect(new URL("/dashboard", req.url))
   }
 
   // اگه کاربر لاگین نکرده و می‌خواد بره dashboard → ببرش login
-  if (!isLoggedIn && isDashboard) {
+  if (!isLoggedIn && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
@@ -21,5 +19,5 @@ export default auth((req) => {
 })
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/dashboard/:path*", "/login", "/register"],
 }
