@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎯 HireHub — سیستم مدیریت استخدام
 
-## Getting Started
+سیستم کامل مدیریت استخدام (ATS) با Next.js 16 و PostgreSQL
 
-First, run the development server:
+![HireHub](https://img.shields.io/badge/Next.js-16.3.8-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19.3.0-blue?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue?logo=typescript)
+![Prisma](https://img.shields.io/badge/Prisma-6.19.3-2D3748?logo=prisma)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🌟 درباره پروژه
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**HireHub** یه سیستم مدیریت استخدام مدرن هست که به شرکت‌ها کمک می‌کنه:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 📢 آگهی‌های شغلی ثبت کنن
+- 👥 متقاضیان رو مدیریت کنن
+- 📊 آمار و گزارش ببینن
+- ✉️ با کارجویان ارتباط برقرار کنن
 
-## Learn More
+و به کارجویان کمک می‌کنه:
 
-To learn more about Next.js, take a look at the following resources:
+- 🔍 آگهی‌های شغلی رو جستجو کنن
+- 📝 برای موقعیت‌ها درخواست بفرستن
+- 📊 وضعیت درخواست‌هاشون رو ببینن
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 لینک‌ها
 
-## Deploy on Vercel
+- **🌐 Live Demo:** [https://hirevibe25.vercel.app](https://hirevibe25.vercel.app)
+- **📦 GitHub:** [https://github.com/Myebmi/my-node-project](https://github.com/Myebmi/my-node-project)
+(Yasen Ebrahimi ** 10.02.2026**
+E-Mail ** Myebmi@outlook.com)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ✨ ویژگی‌ها
+
+### 🔐 احراز هویت
+- ثبت‌نام و ورود با ایمیل/رمز
+- هش کردن رمز با bcrypt
+- Session با NextAuth v5
+- محافظت از مسیرها
+
+### 💼 مدیریت آگهی‌ها
+- ساخت، ویرایش، حذف آگهی
+- وضعیت (باز/بسته/پیش‌نویس)
+- نوع همکاری (تمام‌وقت، پاره‌وقت، دورکاری، ...)
+- فیلتر بر اساس وضعیت
+
+### 👥 مدیریت متقاضیان
+- ارسال درخواست با نامه پوششی
+- لینک رزومه
+- تغییر وضعیت (در انتظار، بررسی، مصاحبه، رد، استخدام)
+- مشاهده لیست متقاضیان
+
+### 📊 داشبورد و آمار
+- ۴ کارت آمار (آگهی‌ها، درخواست‌ها، کاربران، استخدام)
+- نمودار میله‌ای (وضعیت درخواست‌ها)
+- نمودار دایره‌ای (نقش کاربران)
+- آمار مختص هر نقش
+
+### 🎨 UI/UX
+- طراحی ریسپانسیو
+- RTL کامل (فارسی)
+- Tailwind CSS
+- کامپوننت‌های shadcn/ui
+
+---
+
+## 🛠 تکنولوژی‌ها
+
+| لایه | تکنولوژی |
+|------|----------|
+| **Frontend** | Next.js 16 (App Router)، React 19، TypeScript |
+| **Styling** | Tailwind CSS، shadcn/ui |
+| **Backend** | Next.js Server Actions، API Routes |
+| **Database** | PostgreSQL (Supabase) |
+| **ORM** | Prisma 6 |
+| **Auth** | NextAuth v5 (Auth.js) |
+| **Validation** | Zod |
+| **Charts** | Recharts |
+| **Password** | bcryptjs |
+| **Deploy** | Vercel |
+
+---
+
+## 📁 ساختار پروژه
