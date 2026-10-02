@@ -17,21 +17,38 @@ export default async function DashboardPage() {
   const isRecruiter =
     session.user?.role === "RECRUITER" || session.user?.role === "ADMIN"
 
-  // آمار کلی
-  const [totalJobs, totalApplications, totalUsers, totalHired] =
-    await Promise.all([
-      prisma.job.count(),
-      prisma.application.count(),
-      prisma.user.count(),
-      prisma.application.count({ where: { status: "HIRED" } }),
-    ])
+  // همه Queryها رو موازی اجرا کن
+  const [
+    totalJobs,
+    totalApplications,
+    totalUsers,
+    totalHired,
+    myJobs,
+    myApplications,
+    statusCounts,
+    roleCounts,
+  ] = await Promise.all([
+    prisma.job.count(),
+    prisma.application.count(),
+    prisma.user.count(),
+    prisma.application.count({ where: { status: "HIRED" } }),
+    isRecruiter
+      ? prisma.job.count({ where: { recruiterId: session.user.id } })
+      : Promise.resolve(0),
+    !isRecruiter
+      ? prisma.application.count({ where: { applicantId: session.user.id } })
+      : Promise.resolve(0),
+    prisma.application.groupBy({
+      by: ["status"],
+      _count: true,
+    }),
+    prisma.user.groupBy({
+      by: ["role"],
+      _count: true,
+    }),
+  ])
 
   // داده‌های نمودار میله‌ای
-  const statusCounts = await prisma.application.groupBy({
-    by: ["status"],
-    _count: true,
-  })
-
   const statusLabels: Record<string, string> = {
     PENDING: "در انتظار",
     REVIEWING: "بررسی",
@@ -40,33 +57,28 @@ export default async function DashboardPage() {
     HIRED: "استخدام",
   }
 
-  const applicationsData = statusCounts.map((s) => ({
-    name: statusLabels[s.status] || s.status,
-    count: s._count,
-  }))
+  const applicationsData = statusCounts.map(
+    (s: { status: string; _count: number }) => ({
+      name: statusLabels[s.status] || s.status,
+      count: s._count,
+    })
+  )
 
   // داده‌های نمودار دایره‌ای
-  const roleCounts = await prisma.user.groupBy({
-    by: ["role"],
-    _count: true,
-  })
-
   const roleLabels: Record<string, string> = {
     ADMIN: "ادمین",
     RECRUITER: "استخدام‌کننده",
     CANDIDATE: "کارجو",
   }
 
-  const usersData = roleCounts.map((r) => ({
-    name: roleLabels[r.role] || r.role,
-    value: r._count,
-  }))
+  const usersData = roleCounts.map(
+    (r: { role: string; _count: number }) => ({
+      name: roleLabels[r.role] || r.role,
+      value: r._count,
+    })
+  )
 
-  // آمار مختص Recruiter
-  const myJobs = isRecruiter
-    ? await prisma.job.count({ where: { recruiterId: session.user.id } })
-    : 0
-
+  // کارت‌های آمار
   const stats = isRecruiter
     ? [
         { title: "آگهی‌های من", value: myJobs, icon: "💼", color: "text-blue-500" },
@@ -76,7 +88,7 @@ export default async function DashboardPage() {
       ]
     : [
         { title: "کل آگهی‌ها", value: totalJobs, icon: "💼", color: "text-blue-500" },
-        { title: "درخواست‌های من", value: await prisma.application.count({ where: { applicantId: session.user.id } }), icon: "📨", color: "text-yellow-500" },
+        { title: "درخواست‌های من", value: myApplications, icon: "📨", color: "text-yellow-500" },
         { title: "کل کاربران", value: totalUsers, icon: "👥", color: "text-purple-500" },
         { title: "استخدام شده", value: totalHired, icon: "✅", color: "text-green-500" },
       ]
