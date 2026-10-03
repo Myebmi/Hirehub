@@ -1,8 +1,9 @@
 "use client"
-import { toast } from "sonner"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from "sonner"
 import { createJob } from "@/actions/job"
 
 export default function NewJobPage() {
@@ -19,37 +20,45 @@ export default function NewJobPage() {
     const result = await createJob(formData)
 
     if (result.success) {
-  toast.success("آگهی با موفقیت ثبت شد! ✅", {
-    description: "آگهی شما در لیست نمایش داده می‌شود",
-  })
-  router.push("/jobs")
-  router.refresh()
-} else {
-  setError(result.error || "خطایی رخ داد")
-  toast.error("خطا در ثبت آگهی", {
-    description: result.error || "لطفاً دوباره تلاش کنید",
-  })
-  setLoading(false)
-}
+      toast.success("آگهی با موفقیت ثبت شد! ✅", {
+        description: "آگهی شما در لیست نمایش داده می‌شود",
+      })
+      router.push("/jobs")
+      router.refresh()
+    } else {
+      setError(result.error || "خطایی رخ داد")
+      toast.error("خطا در ثبت آگهی", {
+        description: result.error || "لطفاً دوباره تلاش کنید",
+      })
+      setLoading(false)
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8 dark:bg-gray-900">
       <div className="mx-auto max-w-2xl">
         <div className="mb-6">
-          <Link href="/jobs" className="text-blue-600 hover:underline">
+          <Link
+            href="/jobs"
+            className="text-blue-600 hover:underline dark:text-blue-400"
+          >
             ← بازگشت به لیست
           </Link>
-          <h1 className="mt-2 text-3xl font-bold">آگهی شغلی جدید</h1>
+          <h1 className="mt-2 text-3xl font-bold dark:text-white">
+            آگهی شغلی جدید
+          </h1>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 rounded-lg bg-white p-8 shadow"
+          className="space-y-6 rounded-lg bg-white p-8 shadow dark:bg-gray-800"
         >
           {/* Title */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium dark:text-gray-300"
+            >
               عنوان شغل *
             </label>
             <input
@@ -57,14 +66,17 @@ export default function NewJobPage() {
               name="title"
               type="text"
               required
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
               placeholder="مثلاً: برنامه‌نویس فرانت‌اند"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium dark:text-gray-300"
+            >
               توضیحات *
             </label>
             <textarea
@@ -72,14 +84,17 @@ export default function NewJobPage() {
               name="description"
               required
               rows={5}
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
               placeholder="شرح کامل موقعیت شغلی، مسئولیت‌ها و نیازمندی‌ها..."
             />
           </div>
 
           {/* Location */}
           <div>
-            <label htmlFor="location" className="block text-sm font-medium">
+            <label
+              htmlFor="location"
+              className="block text-sm font-medium dark:text-gray-300"
+            >
               محل کار *
             </label>
             <input
@@ -87,35 +102,41 @@ export default function NewJobPage() {
               name="location"
               type="text"
               required
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
               placeholder="مثلاً: کابل، افغانستان"
             />
           </div>
 
           {/* Salary */}
           <div>
-            <label htmlFor="salary" className="block text-sm font-medium">
+            <label
+              htmlFor="salary"
+              className="block text-sm font-medium dark:text-gray-300"
+            >
               حقوق (اختیاری)
             </label>
             <input
               id="salary"
               name="salary"
               type="number"
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
               placeholder="مثلاً: 50000"
             />
           </div>
 
           {/* Type */}
           <div>
-            <label htmlFor="type" className="block text-sm font-medium">
+            <label
+              htmlFor="type"
+              className="block text-sm font-medium dark:text-gray-300"
+            >
               نوع همکاری *
             </label>
             <select
               id="type"
               name="type"
               required
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
               <option value="FULL_TIME">تمام‌وقت</option>
               <option value="PART_TIME">پاره‌وقت</option>
@@ -127,13 +148,16 @@ export default function NewJobPage() {
 
           {/* Status */}
           <div>
-            <label htmlFor="status" className="block text-sm font-medium">
+            <label
+              htmlFor="status"
+              className="block text-sm font-medium dark:text-gray-300"
+            >
               وضعیت
             </label>
             <select
               id="status"
               name="status"
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
               <option value="OPEN">باز</option>
               <option value="DRAFT">پیش‌نویس</option>
@@ -142,7 +166,7 @@ export default function NewJobPage() {
           </div>
 
           {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
               {error}
             </div>
           )}
@@ -151,13 +175,13 @@ export default function NewJobPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 rounded-md bg-blue-600 p-2 text-white transition hover:bg-blue-700 disabled:opacity-50"
             >
               {loading ? "در حال ذخیره..." : "ثبت آگهی"}
             </button>
             <Link
               href="/jobs"
-              className="rounded-md border border-gray-300 px-6 py-2 hover:bg-gray-50"
+              className="rounded-md border border-gray-300 px-6 py-2 transition hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               انصراف
             </Link>
