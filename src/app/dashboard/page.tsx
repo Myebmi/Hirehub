@@ -1,3 +1,4 @@
+import ThemeToggle from "@/components/ThemeToggle"
 import Link from "next/link"
 import { auth } from "@/../auth"
 import { redirect } from "next/navigation"
@@ -97,45 +98,55 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between rounded-lg bg-white p-6 shadow">
+        <div className="mb-8 flex items-center justify-between rounded-lg bg-white p-6 shadow dark:bg-gray-800">
           <div>
-            <h1 className="text-2xl font-bold">داشبورد HireHub</h1>
-            <p className="mt-1 text-gray-600">خوش آمدی، {session.user?.name}</p>
+            <h1 className="text-2xl font-bold dark:text-white">داشبورد HireHub</h1>
+            <p className="mt-1 text-gray-600 dark:text-gray-400">
+      خوش آمدی، {session.user?.name}
+            </p>
           </div>
-          <LogoutButton />
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <LogoutButton />
+          </div>
         </div>
 
         {/* Stats Cards */}
         <StatsCards stats={stats} />
 
         {/* Quick Actions */}
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <Link
-            href="/jobs"
-            className="rounded-lg bg-white p-6 shadow transition hover:shadow-md"
-          >
-            <h2 className="text-lg font-semibold">💼 آگهی‌ها</h2>
-            <p className="mt-1 text-sm text-gray-600">مشاهده همه آگهی‌ها</p>
-          </Link>
+        {/* Quick Actions */}
+<div className="mt-6 grid gap-4 md:grid-cols-3">
+  <Link
+    href="/jobs"
+    className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
+  >
+    <h2 className="text-lg font-semibold dark:text-white">💼 آگهی‌ها</h2>
+    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+      مشاهده همه آگهی‌ها
+    </p>
+  </Link>
 
-          <Link
-            href="/my-applications"
-            className="rounded-lg bg-white p-6 shadow transition hover:shadow-md"
-          >
-            <h2 className="text-lg font-semibold">📋 درخواست‌های من</h2>
-            <p className="mt-1 text-sm text-gray-600">درخواست‌های فرستاده</p>
-          </Link>
+  <Link
+    href="/my-applications"
+    className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
+  >
+    <h2 className="text-lg font-semibold dark:text-white">📋 درخواست‌های من</h2>
+    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+      درخواست‌های فرستاده
+    </p>
+  </Link>
 
-          {isRecruiter && (
-            <Link
-              href="/jobs/new"
-              className="rounded-lg bg-blue-600 p-6 text-white shadow transition hover:bg-blue-700"
-            >
-              <h2 className="text-lg font-semibold">➕ آگهی جدید</h2>
-              <p className="mt-1 text-sm opacity-90">ثبت موقعیت شغلی</p>
-            </Link>
-          )}
-        </div>
+  {isRecruiter && (
+    <Link
+      href="/jobs/new"
+      className="rounded-lg bg-blue-600 p-6 text-white shadow transition hover:bg-blue-700"
+    >
+      <h2 className="text-lg font-semibold">➕ آگهی جدید</h2>
+      <p className="mt-1 text-sm opacity-90">ثبت موقعیت شغلی</p>
+    </Link>
+  )}
+</div>
 
         {/* Charts */}
         <div className="mt-6 grid gap-6 lg:grid-cols-2">

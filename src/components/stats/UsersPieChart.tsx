@@ -18,8 +18,10 @@ const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"]
 
 export default function UsersPieChart({ data }: { data: ChartData[] }) {
   return (
-    <div className="rounded-lg bg-white p-6 shadow">
-      <h2 className="mb-4 text-lg font-semibold">توزیع نقش کاربران</h2>
+    <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+  <h2 className="mb-4 text-lg font-semibold dark:text-white">
+    توزیع نقش کاربران
+  </h2>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
