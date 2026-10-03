@@ -1,5 +1,5 @@
 "use client"
-
+import { toast } from "sonner"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -19,12 +19,18 @@ export default function NewJobPage() {
     const result = await createJob(formData)
 
     if (result.success) {
-      router.push("/jobs")
-      router.refresh()
-    } else {
-      setError(result.error || "خطایی رخ داد")
-      setLoading(false)
-    }
+  toast.success("آگهی با موفقیت ثبت شد! ✅", {
+    description: "آگهی شما در لیست نمایش داده می‌شود",
+  })
+  router.push("/jobs")
+  router.refresh()
+} else {
+  setError(result.error || "خطایی رخ داد")
+  toast.error("خطا در ثبت آگهی", {
+    description: result.error || "لطفاً دوباره تلاش کنید",
+  })
+  setLoading(false)
+}
   }
 
   return (

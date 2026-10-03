@@ -1,5 +1,5 @@
 "use client"
-
+import { toast } from "sonner"
 import { Suspense, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
@@ -13,21 +13,27 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError("")
-    setLoading(true)
+  e.preventDefault()
+  setError("")
+  setLoading(true)
 
-    const formData = new FormData(e.currentTarget)
-    const result = await loginUser(formData)
+  const formData = new FormData(e.currentTarget)
+  const result = await loginUser(formData)
 
-    if (result.success) {
-      router.push("/dashboard")
-      router.refresh()
-    } else {
-      setError(result.error || "خطایی رخ داد")
-      setLoading(false)
-    }
+  if (result.success) {
+    toast.success("ورود موفق! 👋", {
+      description: "خوش آمدی به HireHub",
+    })
+    router.push("/dashboard")
+    router.refresh()
+  } else {
+    setError(result.error || "خطایی رخ داد")
+    toast.error("خطا در ورود", {
+      description: result.error || "ایمیل یا رمز عبور اشتباه است",
+    })
+    setLoading(false)
   }
+}
 
   return (
     <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800">

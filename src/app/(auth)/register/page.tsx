@@ -1,5 +1,5 @@
 "use client"
-
+import { toast } from "sonner"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -11,20 +11,26 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError("")
-    setLoading(true)
+  e.preventDefault()
+  setError("")
+  setLoading(true)
 
-    const formData = new FormData(e.currentTarget)
-    const result = await registerUser(formData)
+  const formData = new FormData(e.currentTarget)
+  const result = await registerUser(formData)
 
-    if (result.success) {
-      router.push("/login?registered=true")
-    } else {
-      setError(result.error || "خطایی رخ داد")
-      setLoading(false)
-    }
+  if (result.success) {
+    toast.success("ثبت‌نام با موفقیت انجام شد! 🎉", {
+      description: "در حال انتقال به صفحه ورود...",
+    })
+    router.push("/login?registered=true")
+  } else {
+    setError(result.error || "خطایی رخ داد")
+    toast.error("خطا در ثبت‌نام", {
+      description: result.error || "لطفاً دوباره تلاش کنید",
+    })
+    setLoading(false)
   }
+}
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-900">

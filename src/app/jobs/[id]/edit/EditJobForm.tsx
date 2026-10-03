@@ -1,5 +1,5 @@
 "use client"
-
+import { toast } from "sonner"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -30,12 +30,16 @@ export default function EditJobForm({ job }: { job: Job }) {
     const result = await updateJob(job.id, formData)
 
     if (result.success) {
-      router.push(`/jobs/${job.id}`)
-      router.refresh()
-    } else {
-      setError(result.error || "خطایی رخ داد")
-      setLoading(false)
-    }
+  toast.success("آگهی حذف شد! 🗑️")
+  router.push("/jobs")
+  router.refresh()
+} else {
+  setError(result.error || "خطا در حذف")
+  toast.error("خطا در حذف", {
+    description: result.error || "لطفاً دوباره تلاش کنید",
+  })
+  setDeleting(false)
+}
   }
 
   async function handleDelete() {

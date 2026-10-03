@@ -18,7 +18,7 @@ export default async function JobsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8 dark:bg-gray-900">
       <div className="mx-auto max-w-4xl">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold dark:text-white">آگهی‌های شغلی</h1>
