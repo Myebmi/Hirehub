@@ -1,11 +1,42 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/../auth"
+import JobFilters from "./JobFilters"
 
-export default async function JobsPage() {
+export default async function JobsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; type?: string; location?: string }>
+}) {
+  const params = await searchParams
   const session = await auth()
+
+  const query = params.q || ""
+  const type = params.type || ""
+  const location = params.location || ""
+
+  // ساخت Where clause
+  const where: any = {
+    status: "OPEN",
+  }
+
+  if (query) {
+    where.OR = [
+      { title: { contains: query, mode: "insensitive" } },
+      { description: { contains: query, mode: "insensitive" } },
+    ]
+  }
+
+  if (type) {
+    where.type = type
+  }
+
+  if (location) {
+    where.location = { contains: location, mode: "insensitive" }
+  }
+
   const jobs = await prisma.job.findMany({
-    where: { status: "OPEN" },
+    where,
     orderBy: { createdAt: "desc" },
     include: {
       recruiter: {
@@ -20,8 +51,16 @@ export default async function JobsPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8 dark:bg-gray-900">
       <div className="mx-auto max-w-4xl">
+        {/* Header */}
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold dark:text-white">آگهی‌های شغلی</h1>
+          <div>
+            <h1 className="text-3xl font-bold dark:text-white">
+              آگهی‌های شغلی
+            </h1>
+            <p className="mt-1 text-gray-600 dark:text-gray-400">
+              {jobs.length} آگهی پیدا شد
+            </p>
+          </div>
           {session?.user && (
             <Link
               href="/jobs/new"
@@ -32,10 +71,20 @@ export default async function JobsPage() {
           )}
         </div>
 
+        {/* Filters */}
+        <JobFilters
+          initialQuery={query}
+          initialType={type}
+          initialLocation={location}
+        />
+
+        {/* Jobs List */}
         {jobs.length === 0 ? (
           <div className="rounded-lg bg-white p-8 text-center shadow dark:bg-gray-800">
             <p className="text-gray-500 dark:text-gray-400">
-              هنوز آگهی‌ای ثبت نشده است
+              {query || type || location
+                ? "هیچ آگهی‌ای با این فیلترها پیدا نشد"
+                : "هنوز آگهی‌ای ثبت نشده است"}
             </p>
           </div>
         ) : (
@@ -55,7 +104,7 @@ export default async function JobsPage() {
                 <div className="mt-3 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                   <span>🏷️ {job.type}</span>
                   {job.salary && (
-                    <span>💰 {job.salary.toLocaleString()} افغانی</span>
+                    <span>💰 {job.salary.toLocaleString()} تومان</span>
                   )}
                   <span>👥 {job._count.applications} متقاضی</span>
                 </div>
