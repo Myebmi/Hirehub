@@ -27,16 +27,16 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-900">
+      <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800">
         <div className="text-center">
-          <h1 className="text-3xl font-bold">HireHub</h1>
-          <p className="mt-2 text-gray-600">ساخت حساب جدید</p>
+          <h1 className="text-3xl font-bold dark:text-white">HireHub</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">ساخت حساب جدید</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium">
+            <label htmlFor="name" className="block text-sm font-medium dark:text-gray-300">
               نام کامل
             </label>
             <input
@@ -44,13 +44,13 @@ export default function RegisterPage() {
               name="name"
               type="text"
               required
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-              placeholder="مثلاً: Grade Balle"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              placeholder="مثلاً: گیریت بیل"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium">
+            <label htmlFor="email" className="block text-sm font-medium dark:text-gray-300">
               ایمیل
             </label>
             <input
@@ -58,13 +58,13 @@ export default function RegisterPage() {
               name="email"
               type="email"
               required
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium">
+            <label htmlFor="password" className="block text-sm font-medium dark:text-gray-300">
               رمز عبور
             </label>
             <input
@@ -73,19 +73,19 @@ export default function RegisterPage() {
               type="password"
               required
               minLength={6}
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="حداقل ۶ کاراکتر"
             />
           </div>
 
           <div>
-            <label htmlFor="role" className="block text-sm font-medium">
+            <label htmlFor="role" className="block text-sm font-medium dark:text-gray-300">
               نقش
             </label>
             <select
               id="role"
               name="role"
-              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
               <option value="CANDIDATE">کارجو</option>
               <option value="RECRUITER">استخدام‌کننده</option>
@@ -93,7 +93,7 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
               {error}
             </div>
           )}
@@ -107,9 +107,9 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
           قبلاً ثبت‌نام کرده‌اید؟{" "}
-          <Link href="/login" className="text-blue-600 hover:underline">
+          <Link href="/login" className="text-blue-600 hover:underline dark:text-blue-400">
             ورود
           </Link>
         </p>

@@ -18,10 +18,10 @@ export default async function JobsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
       <div className="mx-auto max-w-4xl">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">آگهی‌های شغلی</h1>
+          <h1 className="text-3xl font-bold dark:text-white">آگهی‌های شغلی</h1>
           {session?.user && (
             <Link
               href="/jobs/new"
@@ -33,8 +33,10 @@ export default async function JobsPage() {
         </div>
 
         {jobs.length === 0 ? (
-          <div className="rounded-lg bg-white p-8 text-center shadow">
-            <p className="text-gray-500">هنوز آگهی‌ای ثبت نشده است</p>
+          <div className="rounded-lg bg-white p-8 text-center shadow dark:bg-gray-800">
+            <p className="text-gray-500 dark:text-gray-400">
+              هنوز آگهی‌ای ثبت نشده است
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -42,13 +44,19 @@ export default async function JobsPage() {
               <Link
                 key={job.id}
                 href={`/jobs/${job.id}`}
-                className="block rounded-lg bg-white p-6 shadow transition hover:shadow-md"
+                className="block rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
               >
-                <h2 className="text-xl font-semibold">{job.title}</h2>
-                <p className="mt-1 text-gray-600">📍 {job.location}</p>
-                <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
+                <h2 className="text-xl font-semibold dark:text-white">
+                  {job.title}
+                </h2>
+                <p className="mt-1 text-gray-600 dark:text-gray-400">
+                  📍 {job.location}
+                </p>
+                <div className="mt-3 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                   <span>🏷️ {job.type}</span>
-                  {job.salary && <span>💰 {job.salary.toLocaleString()} تومان</span>}
+                  {job.salary && (
+                    <span>💰 {job.salary.toLocaleString()} افغانی</span>
+                  )}
                   <span>👥 {job._count.applications} متقاضی</span>
                 </div>
               </Link>
