@@ -4,8 +4,10 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { applyToJob } from "@/actions/application"
+import ResumeUploader from "./ResumeUploader"
 
 export default function ApplyButton({ jobId }: { jobId: string }) {
+  const [resumeUrl, setResumeUrl] = useState("")
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [error, setError] = useState("")
@@ -18,6 +20,7 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
 
     const formData = new FormData(e.currentTarget)
     formData.append("jobId", jobId)
+    formData.append("resumeUrl", resumeUrl)
 
     const result = await applyToJob(formData)
 
@@ -51,6 +54,7 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
             <h2 className="text-xl font-bold dark:text-white">ارسال درخواست</h2>
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+              {/* Cover Letter */}
               <div>
                 <label
                   htmlFor="coverLetter"
@@ -63,25 +67,40 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
                   name="coverLetter"
                   required
                   rows={5}
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                   placeholder="چرا برای این موقعیت مناسب هستید؟"
                 />
               </div>
 
+              {/* Resume Upload */}
               <div>
-                <label
-                  htmlFor="resumeUrl"
-                  className="block text-sm font-medium dark:text-gray-300"
-                >
-                  لینک رزومه (اختیاری)
+                <label className="block text-sm font-medium dark:text-gray-300">
+                  رزومه (اختیاری)
                 </label>
-                <input
-                  id="resumeUrl"
-                  name="resumeUrl"
-                  type="url"
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                  placeholder="https://example.com/resume.pdf"
-                />
+                <p className="mt-1 mb-3 text-xs text-gray-500 dark:text-gray-400">
+                  می‌توانید رزومه خود را با فرمت PDF آپلود کنید یا لینک آن را وارد کنید.
+                </p>
+
+                {/* Uploader */}
+                <ResumeUploader onUploadComplete={setResumeUrl} />
+
+                {/* Or URL input */}
+                <div className="mt-3">
+                  <label
+                    htmlFor="resumeUrl"
+                    className="block text-xs text-gray-500 dark:text-gray-400"
+                  >
+                    یا لینک رزومه:
+                  </label>
+                  <input
+                    id="resumeUrl"
+                    type="url"
+                    value={resumeUrl}
+                    onChange={(e) => setResumeUrl(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                    placeholder="https://example.com/resume.pdf"
+                  />
+                </div>
               </div>
 
               {error && (
