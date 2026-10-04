@@ -27,15 +27,23 @@ export async function registerUser(formData: FormData) {
     const { name, email, password, role } = parsed.data
 
     const existingUser = await prisma.user.findUnique({
+  where: { email },
+})
+
+if (existingUser) {
+  // ⚠️ فقط برای Development: کاربر قدیمی رو حذف کن
+  if (process.env.NODE_ENV === "development") {
+    console.log("🔄 Development: حذف کاربر قدیمی:", email)
+    await prisma.user.delete({
       where: { email },
     })
-
-    if (existingUser) {
-      return {
-        success: false,
-        error: "این ایمیل قبلاً ثبت شده است",
-      }
+  } else {
+    return {
+      success: false,
+      error: "این ایمیل قبلاً ثبت شده است",
     }
+  }
+}
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
