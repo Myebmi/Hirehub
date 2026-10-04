@@ -1,3 +1,6 @@
+import ApplicationsTrendChart from "@/components/stats/ApplicationsTrendChart"
+import HiringRateChart from "@/components/stats/HiringRateChart"
+import WeeklyStatsChart from "@/components/stats/WeeklyStatsChart"
 import ThemeToggle from "@/components/ThemeToggle"
 import Link from "next/link"
 import { auth } from "@/../auth"
@@ -7,6 +10,7 @@ import LogoutButton from "@/components/LogoutButton"
 import StatsCards from "@/components/stats/StatsCards"
 import ApplicationsChart from "@/components/stats/ApplicationsChart"
 import UsersPieChart from "@/components/stats/UsersPieChart"
+import { toAfghanDate } from "@/lib/afghanDate"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -48,6 +52,87 @@ export default async function DashboardPage() {
       _count: true,
     }),
   ])
+
+  // ============ نمودار روند درخواست‌ها (۳۰ روز اخیر) ============
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+  const applicationsTrend = await prisma.application.findMany({
+    where: {
+      createdAt: { gte: thirtyDaysAgo },
+    },
+    select: { createdAt: true },
+  })
+
+  const trendMap = new Map<string, number>()
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date()
+    date.setDate(date.getDate() - i)
+    const key = toAfghanDate(date)
+    trendMap.set(key, 0)
+  }
+
+  applicationsTrend.forEach((app) => {
+    const key = toAfghanDate(app.createdAt)
+    if (trendMap.has(key)) {
+      trendMap.set(key, (trendMap.get(key) || 0) + 1)
+    }
+  })
+
+  const trendData = Array.from(trendMap.entries()).map(([date, count]) => ({
+    date,
+    count,
+  }))
+
+  // ============ آمار هفتگی ============
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+  const [weeklyJobs, weeklyApplications] = await Promise.all([
+    prisma.job.findMany({
+      where: { createdAt: { gte: sevenDaysAgo } },
+      select: { createdAt: true },
+    }),
+    prisma.application.findMany({
+      where: { createdAt: { gte: sevenDaysAgo } },
+      select: { createdAt: true },
+    }),
+  ])
+
+  const weeklyMap = new Map<string, { jobs: number; applications: number }>()
+  const dayNames = ["یک‌شنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"]
+
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date()
+    date.setDate(date.getDate() - i)
+    const dayName = dayNames[date.getDay()]
+    weeklyMap.set(dayName, { jobs: 0, applications: 0 })
+  }
+
+  weeklyJobs.forEach((job) => {
+    const dayName = dayNames[job.createdAt.getDay()]
+    const current = weeklyMap.get(dayName)
+    if (current) {
+      weeklyMap.set(dayName, { ...current, jobs: current.jobs + 1 })
+    }
+  })
+
+  weeklyApplications.forEach((app) => {
+    const dayName = dayNames[app.createdAt.getDay()]
+    const current = weeklyMap.get(dayName)
+    if (current) {
+      weeklyMap.set(dayName, {
+        ...current,
+        applications: current.applications + 1,
+      })
+    }
+  })
+
+  const weeklyData = Array.from(weeklyMap.entries()).map(([day, data]) => ({
+    day,
+    jobs: data.jobs,
+    applications: data.applications,
+  }))
 
   // داده‌های نمودار میله‌ای
   const statusLabels: Record<string, string> = {
@@ -102,7 +187,7 @@ export default async function DashboardPage() {
           <div>
             <h1 className="text-2xl font-bold dark:text-white">داشبورد HireHub</h1>
             <p className="mt-1 text-gray-600 dark:text-gray-400">
-      خوش آمدی، {session.user?.name}
+              خوش آمدی، {session.user?.name}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -115,52 +200,64 @@ export default async function DashboardPage() {
         <StatsCards stats={stats} />
 
         {/* Quick Actions */}
-<div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-  <Link
-    href="/jobs"
-    className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
-  >
-    <h2 className="text-lg font-semibold dark:text-white">💼 آگهی‌ها</h2>
-    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-      مشاهده همه آگهی‌ها
-    </p>
-  </Link>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Link
+            href="/jobs"
+            className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
+          >
+            <h2 className="text-lg font-semibold dark:text-white">💼 آگهی‌ها</h2>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              مشاهده همه آگهی‌ها
+            </p>
+          </Link>
 
-  <Link
-    href="/my-applications"
-    className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
-  >
-    <h2 className="text-lg font-semibold dark:text-white">📋 درخواست‌های من</h2>
-    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-      درخواست‌های فرستاده
-    </p>
-  </Link>
+          <Link
+            href="/my-applications"
+            className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
+          >
+            <h2 className="text-lg font-semibold dark:text-white">📋 درخواست‌های من</h2>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              درخواست‌های فرستاده
+            </p>
+          </Link>
 
-  <Link
-    href="/profile"
-    className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
-  >
-    <h2 className="text-lg font-semibold dark:text-white">👤 پروفایل</h2>
-    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-      ویرایش اطلاعات کاربری
-    </p>
-  </Link>
+          <Link
+            href="/profile"
+            className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
+          >
+            <h2 className="text-lg font-semibold dark:text-white">👤 پروفایل</h2>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              ویرایش اطلاعات کاربری
+            </p>
+          </Link>
 
-  {isRecruiter && (
-    <Link
-      href="/jobs/new"
-      className="rounded-lg bg-blue-600 p-6 text-white shadow transition hover:bg-blue-700"
-    >
-      <h2 className="text-lg font-semibold">➕ آگهی جدید</h2>
-      <p className="mt-1 text-sm opacity-90">ثبت موقعیت شغلی</p>
-    </Link>
-  )}
-</div>
+          {isRecruiter && (
+            <Link
+              href="/jobs/new"
+              className="rounded-lg bg-blue-600 p-6 text-white shadow transition hover:bg-blue-700"
+            >
+              <h2 className="text-lg font-semibold">➕ آگهی جدید</h2>
+              <p className="mt-1 text-sm opacity-90">ثبت موقعیت شغلی</p>
+            </Link>
+          )}
+        </div>
 
         {/* Charts */}
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <ApplicationsChart data={applicationsData} />
           <UsersPieChart data={usersData} />
+        </div>
+
+        {/* Advanced Charts */}
+        <div className="mt-6">
+          <ApplicationsTrendChart data={trendData} />
+        </div>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <WeeklyStatsChart data={weeklyData} />
+          <HiringRateChart
+            data={{ hired: totalHired, total: totalApplications }}
+          />
         </div>
       </div>
     </div>
