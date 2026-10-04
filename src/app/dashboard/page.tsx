@@ -115,8 +115,7 @@ export default async function DashboardPage() {
         <StatsCards stats={stats} />
 
         {/* Quick Actions */}
-        {/* Quick Actions */}
-<div className="mt-6 grid gap-4 md:grid-cols-3">
+<div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
   <Link
     href="/jobs"
     className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
@@ -134,6 +133,16 @@ export default async function DashboardPage() {
     <h2 className="text-lg font-semibold dark:text-white">📋 درخواست‌های من</h2>
     <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
       درخواست‌های فرستاده
+    </p>
+  </Link>
+
+  <Link
+    href="/profile"
+    className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
+  >
+    <h2 className="text-lg font-semibold dark:text-white">👤 پروفایل</h2>
+    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+      ویرایش اطلاعات کاربری
     </p>
   </Link>
 
