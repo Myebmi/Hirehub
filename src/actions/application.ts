@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma"
 import { applicationSchema, updateApplicationStatusSchema } from "@/lib/validations/application"
 import { auth } from "@/../auth"
 import { revalidatePath } from "next/cache"
+import { sendApplicationStatusEmail } from "@/lib/email"
+import { sendNewApplicationEmail } from "@/lib/email"
 
 export async function applyToJob(formData: FormData) {
   try {
@@ -59,7 +61,21 @@ export async function applyToJob(formData: FormData) {
         resumeUrl: resumeUrl || null,
       },
     })
+    // ✅ ایمیل به Recruiter
+    const jobWithRecruiter = await prisma.job.findUnique({
+      where: { id: jobId },
+      include: { recruiter: true },
+    })
 
+    if (jobWithRecruiter?.recruiter?.email) {
+      await sendNewApplicationEmail(
+        jobWithRecruiter.recruiter.email,
+        jobWithRecruiter.recruiter.name || "استخدام‌کننده",
+        session.user.name || "کاربر",
+        jobWithRecruiter.title
+      )
+    }
+    
     revalidatePath(`/jobs/${jobId}`)
     revalidatePath("/my-applications")
     return { success: true }
@@ -102,6 +118,19 @@ export async function updateApplicationStatus(
       where: { id: applicationId },
       data: { status: parsed.data.status },
     })
+     // ✅ ایمیل به کارجو
+    const applicant = await prisma.user.findUnique({
+      where: { id: application.applicantId },
+    })
+
+    if (applicant && applicant.email) {
+      await sendApplicationStatusEmail(
+        applicant.email,
+        applicant.name || "کاربر",
+        application.job.title,
+        parsed.data.status
+      )
+    }
 
     revalidatePath(`/jobs/${application.jobId}/applications`)
     return { success: true }

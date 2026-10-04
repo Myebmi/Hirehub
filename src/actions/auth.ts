@@ -5,6 +5,7 @@ import { AuthError } from "next-auth"
 import { prisma } from "@/lib/prisma"
 import { registerSchema, loginSchema } from "@/lib/validations/auth"
 import { signIn } from "@/../auth"
+import { sendWelcomeEmail } from "@/lib/email"
 
 export async function registerUser(formData: FormData) {
   try {
@@ -46,6 +47,16 @@ export async function registerUser(formData: FormData) {
         role,
       },
     })
+
+    // ✅ ایمیل خوش‌آمد (جدا از try اصلی)
+    try {
+      console.log("📧 Attempting to send welcome email to:", email)
+      const emailResult = await sendWelcomeEmail(email, name)
+      console.log("📧 Email result:", emailResult)
+    } catch (emailError) {
+      console.error("❌ Send welcome email error:", emailError)
+      // ایمیل خطا نباید ثبت‌نام رو متوقف کنه
+    }
 
     return {
       success: true,
