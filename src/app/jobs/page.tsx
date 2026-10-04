@@ -104,7 +104,7 @@ export default async function JobsPage({
                 <div className="mt-3 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                   <span>🏷️ {job.type}</span>
                   {job.salary && (
-                    <span>💰 {job.salary.toLocaleString()} تومان</span>
+                    <span>💰 {job.salary.toLocaleString()} افغانی</span>
                   )}
                   <span>👥 {job._count.applications} متقاضی</span>
                 </div>

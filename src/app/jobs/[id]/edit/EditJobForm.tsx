@@ -1,8 +1,9 @@
 "use client"
-import { toast } from "sonner"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from "sonner"
 import { updateJob, deleteJob } from "@/actions/job"
 
 type Job = {
@@ -30,16 +31,16 @@ export default function EditJobForm({ job }: { job: Job }) {
     const result = await updateJob(job.id, formData)
 
     if (result.success) {
-  toast.success("آگهی حذف شد! 🗑️")
-  router.push("/jobs")
-  router.refresh()
-} else {
-  setError(result.error || "خطا در حذف")
-  toast.error("خطا در حذف", {
-    description: result.error || "لطفاً دوباره تلاش کنید",
-  })
-  setDeleting(false)
-}
+      toast.success("آگهی با موفقیت ویرایش شد! ✅")
+      router.push(`/jobs/${job.id}`)
+      router.refresh()
+    } else {
+      setError(result.error || "خطایی رخ داد")
+      toast.error("خطا در ویرایش", {
+        description: result.error || "لطفاً دوباره تلاش کنید",
+      })
+      setLoading(false)
+    }
   }
 
   async function handleDelete() {
@@ -51,10 +52,14 @@ export default function EditJobForm({ job }: { job: Job }) {
     const result = await deleteJob(job.id)
 
     if (result.success) {
+      toast.success("آگهی حذف شد! 🗑️")
       router.push("/jobs")
       router.refresh()
     } else {
       setError(result.error || "خطا در حذف")
+      toast.error("خطا در حذف", {
+        description: result.error || "لطفاً دوباره تلاش کنید",
+      })
       setDeleting(false)
     }
   }
@@ -62,10 +67,10 @@ export default function EditJobForm({ job }: { job: Job }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 rounded-lg bg-white p-8 shadow"
+      className="space-y-6 rounded-lg bg-white p-8 shadow dark:bg-gray-800"
     >
       <div>
-        <label htmlFor="title" className="block text-sm font-medium">
+        <label htmlFor="title" className="block text-sm font-medium dark:text-gray-300">
           عنوان شغل *
         </label>
         <input
@@ -74,12 +79,12 @@ export default function EditJobForm({ job }: { job: Job }) {
           type="text"
           required
           defaultValue={job.title}
-          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
       </div>
 
       <div>
-        <label htmlFor="description" className="block text-sm font-medium">
+        <label htmlFor="description" className="block text-sm font-medium dark:text-gray-300">
           توضیحات *
         </label>
         <textarea
@@ -88,12 +93,12 @@ export default function EditJobForm({ job }: { job: Job }) {
           required
           rows={5}
           defaultValue={job.description}
-          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
       </div>
 
       <div>
-        <label htmlFor="location" className="block text-sm font-medium">
+        <label htmlFor="location" className="block text-sm font-medium dark:text-gray-300">
           محل کار *
         </label>
         <input
@@ -102,12 +107,12 @@ export default function EditJobForm({ job }: { job: Job }) {
           type="text"
           required
           defaultValue={job.location}
-          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
       </div>
 
       <div>
-        <label htmlFor="salary" className="block text-sm font-medium">
+        <label htmlFor="salary" className="block text-sm font-medium dark:text-gray-300">
           حقوق (اختیاری)
         </label>
         <input
@@ -115,12 +120,12 @@ export default function EditJobForm({ job }: { job: Job }) {
           name="salary"
           type="number"
           defaultValue={job.salary || ""}
-          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
       </div>
 
       <div>
-        <label htmlFor="type" className="block text-sm font-medium">
+        <label htmlFor="type" className="block text-sm font-medium dark:text-gray-300">
           نوع همکاری *
         </label>
         <select
@@ -128,7 +133,7 @@ export default function EditJobForm({ job }: { job: Job }) {
           name="type"
           required
           defaultValue={job.type}
-          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         >
           <option value="FULL_TIME">تمام‌وقت</option>
           <option value="PART_TIME">پاره‌وقت</option>
@@ -139,14 +144,14 @@ export default function EditJobForm({ job }: { job: Job }) {
       </div>
 
       <div>
-        <label htmlFor="status" className="block text-sm font-medium">
+        <label htmlFor="status" className="block text-sm font-medium dark:text-gray-300">
           وضعیت
         </label>
         <select
           id="status"
           name="status"
           defaultValue={job.status}
-          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         >
           <option value="OPEN">باز</option>
           <option value="DRAFT">پیش‌نویس</option>
@@ -155,7 +160,7 @@ export default function EditJobForm({ job }: { job: Job }) {
       </div>
 
       {error && (
-        <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+        <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
           {error}
         </div>
       )}
@@ -170,16 +175,18 @@ export default function EditJobForm({ job }: { job: Job }) {
         </button>
         <Link
           href={`/jobs/${job.id}`}
-          className="rounded-md border border-gray-300 px-6 py-2 hover:bg-gray-50"
+          className="rounded-md border border-gray-300 px-6 py-2 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           انصراف
         </Link>
       </div>
 
       {/* Delete Section */}
-      <div className="border-t pt-6">
-        <h3 className="text-sm font-medium text-red-600">منطقه خطر</h3>
-        <p className="mt-1 text-sm text-gray-500">
+      <div className="border-t pt-6 dark:border-gray-700">
+        <h3 className="text-sm font-medium text-red-600 dark:text-red-400">
+          منطقه خطر
+        </h3>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           با حذف آگهی، تمام درخواست‌های مرتبط هم حذف می‌شوند.
         </p>
         <button
