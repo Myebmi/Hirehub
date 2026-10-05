@@ -1,0 +1,37 @@
+{
+  "name": "HireHub - سیستم مدیریت استخدام",
+  "short_name": "HireHub",
+  "description": "پلتفرم استخدام نسل جدید",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "آگهی‌ها",
+      "url": "/jobs",
+      "description": "مشاهده آگهی‌های شغلی"
+    },
+    {
+      "name": "داشبورد",
+      "url": "/dashboard",
+      "description": "داشبورد کاربری"
+    }
+  ]
+}
