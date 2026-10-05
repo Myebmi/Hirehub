@@ -6,7 +6,6 @@ import ThemeToggle from "@/components/ThemeToggle"
 export default async function Home() {
   const session = await auth()
 
-  // آمار زنده
   const [totalJobs, totalUsers, totalApplications] = await Promise.all([
     prisma.job.count({ where: { status: "OPEN" } }),
     prisma.user.count(),
@@ -15,7 +14,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
-      {/* ====== Navbar ====== */}
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-800 dark:bg-gray-950/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
           <Link href="/" className="flex items-center gap-2">
@@ -44,6 +43,12 @@ export default async function Home() {
             >
               چطور کار می‌کند؟
             </a>
+            <Link
+              href="/contact"
+              className="text-sm font-medium text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+            >
+              تماس با ما
+            </Link>
           </div>
 
           <div className="flex items-center gap-3">
@@ -75,12 +80,9 @@ export default async function Home() {
         </div>
       </nav>
 
-      {/* ====== Hero Section ====== */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden px-4 py-20 md:px-8 md:py-32">
-        {/* Background Gradient */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-blue-950/20 dark:via-gray-950 dark:to-purple-950/20" />
-        
-        {/* Blur Circles */}
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-400/20 blur-3xl dark:bg-blue-600/10" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-purple-400/20 blur-3xl dark:bg-purple-600/10" />
 
@@ -122,7 +124,6 @@ export default async function Home() {
             </Link>
           </div>
 
-          {/* Live Stats */}
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-4">
             <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
@@ -152,7 +153,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ====== Features ====== */}
+      {/* Features */}
       <section id="features" className="border-t border-gray-200 px-4 py-20 md:px-8 dark:border-gray-800">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
@@ -166,42 +167,12 @@ export default async function Home() {
 
           <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {[
-              {
-                icon: "🔐",
-                title: "احراز هویت امن",
-                description:
-                  "ثبت‌نام و ورود با رمزنگاری bcrypt و NextAuth. اطلاعات شما کاملاً امن است.",
-              },
-              {
-                icon: "💼",
-                title: "مدیریت آگهی‌ها",
-                description:
-                  "ساخت، ویرایش و مدیریت آگهی‌های شغلی با امکانات کامل و رابط کاربری ساده.",
-              },
-              {
-                icon: "📄",
-                title: "آپلود رزومه PDF",
-                description:
-                  "رزومه خود را به صورت PDF آپلود کنید و در یک کلیک به کارفرما ارسال کنید.",
-              },
-              {
-                icon: "📊",
-                title: "داشبورد و آمار",
-                description:
-                  "نمودارها و آمار زنده از درخواست‌ها، کاربران و آگهی‌ها در یک نگاه.",
-              },
-              {
-                icon: "🔍",
-                title: "جستجو و فیلتر",
-                description:
-                  "با جستجوی پیشرفته، آگهی‌های مناسب خود را در کمترین زمان پیدا کنید.",
-              },
-              {
-                icon: "🌙",
-                title: "Dark Mode",
-                description:
-                  "رابط کاربری مدرن با پشتیبانی از حالت تیره و روشن برای راحتی چشم.",
-              },
+              { icon: "🔐", title: "احراز هویت امن", description: "ثبت‌نام و ورود با رمزنگاری bcrypt و NextAuth. اطلاعات شما کاملاً امن است." },
+              { icon: "💼", title: "مدیریت آگهی‌ها", description: "ساخت، ویرایش و مدیریت آگهی‌های شغلی با امکانات کامل و رابط کاربری ساده." },
+              { icon: "📄", title: "آپلود رزومه PDF", description: "رزومه خود را به صورت PDF آپلود کنید و در یک کلیک به کارفرما ارسال کنید." },
+              { icon: "📊", title: "داشبورد و آمار", description: "نمودارها و آمار زنده از درخواست‌ها، کاربران و آگهی‌ها در یک نگاه." },
+              { icon: "🔍", title: "جستجو و فیلتر", description: "با جستجوی پیشرفته، آگهی‌های مناسب خود را در کمترین زمان پیدا کنید." },
+              { icon: "🌙", title: "Dark Mode", description: "رابط کاربری مدرن با پشتیبانی از حالت تیره و روشن برای راحتی چشم." },
             ].map((feature, i) => (
               <div
                 key={i}
@@ -222,11 +193,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ====== How It Works ====== */}
-      <section
-        id="how"
-        className="border-t border-gray-200 bg-gray-50 px-4 py-20 md:px-8 dark:border-gray-800 dark:bg-gray-950"
-      >
+      {/* How It Works */}
+      <section id="how" className="border-t border-gray-200 bg-gray-50 px-4 py-20 md:px-8 dark:border-gray-800 dark:bg-gray-950">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 md:text-4xl dark:text-white">
@@ -239,24 +207,9 @@ export default async function Home() {
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">
             {[
-              {
-                step: "۱",
-                title: "ثبت‌نام کنید",
-                description:
-                  "حساب کاربری خود را بسازید و پروفایل خود را کامل کنید.",
-              },
-              {
-                step: "۲",
-                title: "آگهی‌ها را مرور کنید",
-                description:
-                  "با جستجو و فیلتر پیشرفته، آگهی‌های مناسب خود را پیدا کنید.",
-              },
-              {
-                step: "۳",
-                title: "درخواست بفرستید",
-                description:
-                  "با آپلود رزومه PDF، در یک کلیک درخواست خود را ارسال کنید.",
-              },
+              { step: "۱", title: "ثبت‌نام کنید", description: "حساب کاربری خود را بسازید و پروفایل خود را کامل کنید." },
+              { step: "۲", title: "آگهی‌ها را مرور کنید", description: "با جستجو و فیلتر پیشرفته، آگهی‌های مناسب خود را پیدا کنید." },
+              { step: "۳", title: "درخواست بفرستید", description: "با آپلود رزومه PDF، در یک کلیک درخواست خود را ارسال کنید." },
             ].map((item, i) => (
               <div key={i} className="relative text-center">
                 <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 text-3xl font-bold text-white shadow-lg">
@@ -274,7 +227,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ====== For Recruiters ====== */}
+      {/* For Recruiters */}
       <section className="border-t border-gray-200 px-4 py-20 md:px-8 dark:border-gray-800">
         <div className="mx-auto max-w-7xl">
           <div className="grid items-center gap-12 md:grid-cols-2">
@@ -286,23 +239,15 @@ export default async function Home() {
                 تیم خود را با بهترین‌ها بسازید
               </h2>
               <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
-                آگهی خود را ثبت کنید، رزومه‌های دریافتی را مدیریت کنید و
-                بهترین استعدادها را استخدام کنید.
+                آگهی خود را ثبت کنید، رزومه‌های دریافتی را مدیریت کنید و بهترین استعدادها را استخدام کنید.
               </p>
               <ul className="mt-6 space-y-3">
-                {[
-                  "ثبت آگهی در چند ثانیه",
-                  "مدیریت رزومه‌ها و وضعیت متقاضیان",
-                  "آمار دقیق از بازخورد آگهی‌ها",
-                  "ارتباط مستقیم با کارجویان",
-                ].map((item, i) => (
+                {["ثبت آگهی در چند ثانیه", "مدیریت رزومه‌ها و وضعیت متقاضیان", "آمار دقیق از بازخورد آگهی‌ها", "ارتباط مستقیم با کارجویان"].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-sm text-green-600 dark:bg-green-900/30 dark:text-green-400">
                       ✓
                     </span>
-                    <span className="text-gray-700 dark:text-gray-300">
-                      {item}
-                    </span>
+                    <span className="text-gray-700 dark:text-gray-300">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -326,12 +271,8 @@ export default async function Home() {
                     className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900"
                   >
                     <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">
-                        {job.name}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {job.applicants} متقاضی
-                      </div>
+                      <div className="font-semibold text-gray-900 dark:text-white">{job.name}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">{job.applicants} متقاضی</div>
                     </div>
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                       💼
@@ -344,7 +285,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ====== Final CTA ====== */}
+      {/* Final CTA */}
       <section className="border-t border-gray-200 bg-gradient-to-br from-blue-600 to-purple-600 px-4 py-20 md:px-8 dark:border-gray-800">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-3xl font-bold text-white md:text-4xl">
@@ -370,7 +311,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ====== Footer ====== */}
+      {/* Footer */}
       <footer className="border-t border-gray-200 bg-white px-4 py-12 md:px-8 dark:border-gray-800 dark:bg-gray-950">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 md:grid-cols-4">
@@ -379,9 +320,7 @@ export default async function Home() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 text-xl font-bold text-white">
                   H
                 </div>
-                <span className="text-xl font-bold dark:text-white">
-                  HireHub
-                </span>
+                <span className="text-xl font-bold dark:text-white">HireHub</span>
               </Link>
               <p className="mt-4 max-w-md text-gray-600 dark:text-gray-400">
                 پلتفرم استخدام نسل جدید برای اتصال کارجویان و استخدام‌کنندگان.
@@ -417,6 +356,14 @@ export default async function Home() {
                     ورود
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/contact"
+                    className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    تماس با ما
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -434,8 +381,7 @@ export default async function Home() {
 
           <div className="mt-12 border-t border-gray-200 pt-6 text-center text-sm text-gray-600 dark:border-gray-800 dark:text-gray-400">
             <p>
-              © {new Date().getFullYear()} HireHub. ساخته شده با 💻 در
-              افغانستان
+              © {new Date().getFullYear()} HireHub. ساخته شده با 💻 در افغانستان
             </p>
           </div>
         </div>
