@@ -51,6 +51,7 @@ export default function NotFound() {
         {/* Help Text */}
         <p className="animate-fade-in delay-500 mt-12 text-sm text-gray-500 dark:text-gray-500">
           اگه فکر می‌کنید این یه خطاست، لطفاً با ما تماس بگیرید.
+          
         </p>
       </div>
     </div>

@@ -2,13 +2,30 @@
 
 import bcrypt from "bcryptjs"
 import { AuthError } from "next-auth"
+import { headers } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import { registerSchema, loginSchema } from "@/lib/validations/auth"
 import { signIn } from "@/../auth"
 import { sendWelcomeEmail } from "@/lib/email"
+import { loginRatelimit, registerRatelimit } from "@/lib/ratelimit"
 
 export async function registerUser(formData: FormData) {
   try {
+    // ✅ Rate Limiting
+    const headersList = await headers()
+    const ip = headersList.get("x-forwarded-for") || "unknown"
+
+    if (registerRatelimit) {
+      const { success } = await registerRatelimit.limit(ip)
+      if (!success) {
+        return {
+          success: false,
+          error:
+            "تعداد تلاش‌های شما بیش از حد مجاز است. لطفاً بعداً تلاش کنید.",
+        }
+      }
+    }
+
     const rawData = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
@@ -27,23 +44,22 @@ export async function registerUser(formData: FormData) {
     const { name, email, password, role } = parsed.data
 
     const existingUser = await prisma.user.findUnique({
-  where: { email },
-})
-
-if (existingUser) {
-  // ⚠️ فقط برای Development: کاربر قدیمی رو حذف کن
-  if (process.env.NODE_ENV === "development") {
-    console.log("🔄 Development: حذف کاربر قدیمی:", email)
-    await prisma.user.delete({
       where: { email },
     })
-  } else {
-    return {
-      success: false,
-      error: "این ایمیل قبلاً ثبت شده است",
+
+    if (existingUser) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("🔄 Development: حذف کاربر قدیمی:", email)
+        await prisma.user.delete({
+          where: { email },
+        })
+      } else {
+        return {
+          success: false,
+          error: "این ایمیل قبلاً ثبت شده است",
+        }
+      }
     }
-  }
-}
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -56,14 +72,13 @@ if (existingUser) {
       },
     })
 
-    // ✅ ایمیل خوش‌آمد (جدا از try اصلی)
+    // ✅ ایمیل خوش‌آمد
     try {
       console.log("📧 Attempting to send welcome email to:", email)
       const emailResult = await sendWelcomeEmail(email, name)
       console.log("📧 Email result:", emailResult)
     } catch (emailError) {
       console.error("❌ Send welcome email error:", emailError)
-      // ایمیل خطا نباید ثبت‌نام رو متوقف کنه
     }
 
     return {
@@ -82,6 +97,21 @@ if (existingUser) {
 
 export async function loginUser(formData: FormData) {
   try {
+    // ✅ Rate Limiting
+    const headersList = await headers()
+    const ip = headersList.get("x-forwarded-for") || "unknown"
+
+    if (loginRatelimit) {
+      const { success } = await loginRatelimit.limit(ip)
+      if (!success) {
+        return {
+          success: false,
+          error:
+            "تعداد تلاش‌های شما بیش از حد مجاز است. لطفاً ۱ دقیقه صبر کنید.",
+        }
+      }
+    }
+
     const rawData = {
       email: formData.get("email") as string,
       password: formData.get("password") as string,
