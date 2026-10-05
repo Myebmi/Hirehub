@@ -43,14 +43,14 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-md bg-blue-600 p-3 text-white transition hover:bg-blue-700"
+        className="w-full rounded-md bg-blue-600 p-3 text-white shadow-lg shadow-blue-600/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/50 active:scale-95"
       >
         ارسال درخواست
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
+  <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+    <div className="animate-scale-in w-full max-w-lg rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
             <h2 className="text-xl font-bold dark:text-white">ارسال درخواست</h2>
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
