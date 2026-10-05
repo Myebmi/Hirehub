@@ -3,6 +3,32 @@ import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/../auth"
 import ApplyButton from "@/components/ApplyButton"
+import type { Metadata } from "next"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const job = await prisma.job.findUnique({
+    where: { id },
+    select: { title: true, description: true, location: true },
+  })
+
+  if (!job) {
+    return { title: "آگهی پیدا نشد" }
+  }
+
+  return {
+    title: job.title,
+    description: `${job.title} در ${job.location} - ${job.description.substring(0, 150)}...`,
+    openGraph: {
+      title: `${job.title} | HireHub`,
+      description: `${job.title} در ${job.location}`,
+    },
+  }
+}
 
 export default async function JobDetailPage({
   params,

@@ -8,8 +8,25 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "HireHub - سیستم مدیریت استخدام",
-  description: "پلتفرم استخدام نسل جدید برای اتصال کارجویان و استخدام‌کنندگان",
+  title: {
+    default: "HireHub - سیستم مدیریت استخدام",
+    template: "%s | HireHub",
+  },
+  description:
+    "پلتفرم استخدام نسل جدید برای اتصال کارجویان و استخدام‌کنندگان. آگهی‌های شغلی، مدیریت متقاضیان، و داشبورد حرفه‌ای.",
+  keywords: [
+    "استخدام",
+    "کار",
+    "شغل",
+    "آگهی شغلی",
+    "کارجو",
+    "استخدام‌کننده",
+    "HireHub",
+    "افغانستان",
+  ],
+  authors: [{ name: "Yasen Ebrahimi" }],
+  creator: "Yasen Ebrahimi",
+  publisher: "HireHub",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -22,6 +39,42 @@ export const metadata: Metadata = {
   icons: {
     icon: "/icon-192x192.png",
     apple: "/icon-192x192.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "fa_AF",
+    url: "https://hirelink.vercel.app",
+    siteName: "HireHub",
+    title: "HireHub - سیستم مدیریت استخدام",
+    description:
+      "پلتفرم استخدام نسل جدید برای اتصال کارجویان و استخدام‌کنندگان",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "HireHub",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HireHub - سیستم مدیریت استخدام",
+    description:
+      "پلتفرم استخدام نسل جدید برای اتصال کارجویان و استخدام‌کنندگان",
+    images: ["/og-image.png"],
+    creator: "@hirehub",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 }
 

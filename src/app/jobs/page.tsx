@@ -2,6 +2,16 @@ import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/../auth"
 import JobFilters from "./JobFilters"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "آگهی‌های شغلی",
+  description: "مشاهده همه آگهی‌های شغلی فعال در HireHub",
+  openGraph: {
+    title: "آگهی‌های شغلی | HireHub",
+    description: "مشاهده همه آگهی‌های شغلی فعال در HireHub",
+  },
+}
 
 export default async function JobsPage({
   searchParams,
