@@ -14,6 +14,9 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  // ✅ برای swagger-ui-react
+  transpilePackages: ["swagger-ui-react", "react-syntax-highlighter"],
+  
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
