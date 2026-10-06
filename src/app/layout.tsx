@@ -1,13 +1,11 @@
 import type { Metadata, Viewport } from "next"
-import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import { Toaster } from "sonner"
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
-
 export const metadata: Metadata = {
+    metadataBase: new URL(process.env.AUTH_URL || "http://localhost:3000"),
   title: {
     default: "HireHub - سیستم مدیریت استخدام",
     template: "%s | HireHub",
@@ -93,7 +91,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -1,21 +1,22 @@
-import ApplicationsTrendChart from "@/components/stats/ApplicationsTrendChart"
-import HiringRateChart from "@/components/stats/HiringRateChart"
-import WeeklyStatsChart from "@/components/stats/WeeklyStatsChart"
-import ThemeToggle from "@/components/ThemeToggle"
 import Link from "next/link"
 import { auth } from "@/../auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import LogoutButton from "@/components/LogoutButton"
 import StatsCards from "@/components/stats/StatsCards"
-import ApplicationsChart from "@/components/stats/ApplicationsChart"
-import UsersPieChart from "@/components/stats/UsersPieChart"
+import ThemeToggle from "@/components/ThemeToggle"
 import { toAfghanDate } from "@/lib/afghanDate"
-import UsersTrendChart from "@/components/stats/UsersTrendChart"
-import JobsStatusChart from "@/components/stats/JobsStatusChart"
-import HiringFunnelChart from "@/components/stats/HiringFunnelChart"
-import MonthlyStackedChart from "@/components/stats/MonthlyStackedChart"
-
+import {
+  ApplicationsChart,
+  UsersPieChart,
+  ApplicationsTrendChart,
+  HiringRateChart,
+  WeeklyStatsChart,
+  UsersTrendChart,
+  JobsStatusChart,
+  HiringFunnelChart,
+  MonthlyStackedChart,
+} from "@/components/stats/ChartWrapper"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -105,7 +106,15 @@ export default async function DashboardPage() {
   ])
 
   const weeklyMap = new Map<string, { jobs: number; applications: number }>()
-  const dayNames = ["یک‌شنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"]
+  const dayNames = [
+    "یک‌شنبه",
+    "دوشنبه",
+    "سه‌شنبه",
+    "چهارشنبه",
+    "پنج‌شنبه",
+    "جمعه",
+    "شنبه",
+  ]
 
   for (let i = 6; i >= 0; i--) {
     const date = new Date()
@@ -138,7 +147,8 @@ export default async function DashboardPage() {
     jobs: data.jobs,
     applications: data.applications,
   }))
-    // ============ نمودار روند کاربران (۳۰ روز اخیر) ============
+
+  // ============ نمودار روند کاربران (۳۰ روز اخیر) ============
   const thirtyDaysAgo2 = new Date()
   thirtyDaysAgo2.setDate(thirtyDaysAgo2.getDate() - 30)
 
@@ -414,6 +424,7 @@ export default async function DashboardPage() {
             data={{ hired: totalHired, total: totalApplications }}
           />
         </div>
+
         {/* Users Trend & Jobs Status */}
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <UsersTrendChart data={usersTrendData} />
@@ -425,7 +436,6 @@ export default async function DashboardPage() {
           <HiringFunnelChart data={hiringFunnelData} />
           <MonthlyStackedChart data={monthlyData} />
         </div>
-
       </div>
     </div>
   )
