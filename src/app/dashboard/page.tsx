@@ -11,6 +11,11 @@ import StatsCards from "@/components/stats/StatsCards"
 import ApplicationsChart from "@/components/stats/ApplicationsChart"
 import UsersPieChart from "@/components/stats/UsersPieChart"
 import { toAfghanDate } from "@/lib/afghanDate"
+import UsersTrendChart from "@/components/stats/UsersTrendChart"
+import JobsStatusChart from "@/components/stats/JobsStatusChart"
+import HiringFunnelChart from "@/components/stats/HiringFunnelChart"
+import MonthlyStackedChart from "@/components/stats/MonthlyStackedChart"
+
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -130,6 +135,156 @@ export default async function DashboardPage() {
 
   const weeklyData = Array.from(weeklyMap.entries()).map(([day, data]) => ({
     day,
+    jobs: data.jobs,
+    applications: data.applications,
+  }))
+    // ============ نمودار روند کاربران (۳۰ روز اخیر) ============
+  const thirtyDaysAgo2 = new Date()
+  thirtyDaysAgo2.setDate(thirtyDaysAgo2.getDate() - 30)
+
+  const usersTrend = await prisma.user.findMany({
+    where: {
+      createdAt: { gte: thirtyDaysAgo2 },
+    },
+    select: { createdAt: true },
+  })
+
+  const usersTrendMap = new Map<string, number>()
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date()
+    date.setDate(date.getDate() - i)
+    const key = toAfghanDate(date)
+    usersTrendMap.set(key, 0)
+  }
+
+  usersTrend.forEach((user) => {
+    const key = toAfghanDate(user.createdAt)
+    if (usersTrendMap.has(key)) {
+      usersTrendMap.set(key, (usersTrendMap.get(key) || 0) + 1)
+    }
+  })
+
+  const usersTrendData = Array.from(usersTrendMap.entries()).map(
+    ([date, count]) => ({ date, count })
+  )
+
+  // ============ وضعیت آگهی‌ها ============
+  const [openJobs, draftJobs, closedJobs] = await Promise.all([
+    prisma.job.count({ where: { status: "OPEN" } }),
+    prisma.job.count({ where: { status: "DRAFT" } }),
+    prisma.job.count({ where: { status: "CLOSED" } }),
+  ])
+
+  const jobsStatusData = [
+    { name: "باز", value: openJobs, color: "#10b981" },
+    { name: "پیش‌نویس", value: draftJobs, color: "#f59e0b" },
+    { name: "بسته", value: closedJobs, color: "#ef4444" },
+  ]
+
+  // ============ قیف استخدام ============
+  const [
+    pendingCount,
+    reviewingCount,
+    interviewCount,
+    rejectedCount,
+    hiredCount,
+  ] = await Promise.all([
+    prisma.application.count({ where: { status: "PENDING" } }),
+    prisma.application.count({ where: { status: "REVIEWING" } }),
+    prisma.application.count({ where: { status: "INTERVIEW" } }),
+    prisma.application.count({ where: { status: "REJECTED" } }),
+    prisma.application.count({ where: { status: "HIRED" } }),
+  ])
+
+  const hiringFunnelData = [
+    { status: "در انتظار", count: pendingCount, fill: "#f59e0b" },
+    { status: "بررسی", count: reviewingCount, fill: "#3b82f6" },
+    { status: "مصاحبه", count: interviewCount, fill: "#8b5cf6" },
+    { status: "استخدام", count: hiredCount, fill: "#10b981" },
+    { status: "رد شده", count: rejectedCount, fill: "#ef4444" },
+  ]
+
+  // ============ فعالیت ماهانه (۶ ماه اخیر) ============
+  const afghanMonths = [
+    "حمل",
+    "ثور",
+    "جوزا",
+    "سرطان",
+    "اسد",
+    "سنبله",
+    "میزان",
+    "عقرب",
+    "قوس",
+    "جدی",
+    "دلو",
+    "حوت",
+  ]
+
+  const sixMonthsAgo = new Date()
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+
+  const [monthlyUsers, monthlyJobs, monthlyApps] = await Promise.all([
+    prisma.user.findMany({
+      where: { createdAt: { gte: sixMonthsAgo } },
+      select: { createdAt: true },
+    }),
+    prisma.job.findMany({
+      where: { createdAt: { gte: sixMonthsAgo } },
+      select: { createdAt: true },
+    }),
+    prisma.application.findMany({
+      where: { createdAt: { gte: sixMonthsAgo } },
+      select: { createdAt: true },
+    }),
+  ])
+
+  const monthlyMap = new Map<
+    string,
+    { users: number; jobs: number; applications: number }
+  >()
+
+  for (let i = 5; i >= 0; i--) {
+    const date = new Date()
+    date.setMonth(date.getMonth() - i)
+    const gregorianMonth = date.getMonth() + 1
+    const afghanMonthIndex = (gregorianMonth + 8) % 12
+    const monthName = afghanMonths[afghanMonthIndex] || afghanMonths[0]
+    monthlyMap.set(monthName, { users: 0, jobs: 0, applications: 0 })
+  }
+
+  monthlyUsers.forEach((u) => {
+    const monthIndex = (u.createdAt.getMonth() + 8) % 12
+    const monthName = afghanMonths[monthIndex]
+    const current = monthlyMap.get(monthName)
+    if (current) {
+      monthlyMap.set(monthName, { ...current, users: current.users + 1 })
+    }
+  })
+
+  monthlyJobs.forEach((j) => {
+    const monthIndex = (j.createdAt.getMonth() + 8) % 12
+    const monthName = afghanMonths[monthIndex]
+    const current = monthlyMap.get(monthName)
+    if (current) {
+      monthlyMap.set(monthName, { ...current, jobs: current.jobs + 1 })
+    }
+  })
+
+  monthlyApps.forEach((a) => {
+    const monthIndex = (a.createdAt.getMonth() + 8) % 12
+    const monthName = afghanMonths[monthIndex]
+    const current = monthlyMap.get(monthName)
+    if (current) {
+      monthlyMap.set(monthName, {
+        ...current,
+        applications: current.applications + 1,
+      })
+    }
+  })
+
+  const monthlyData = Array.from(monthlyMap.entries()).map(([month, data]) => ({
+    month,
+    users: data.users,
     jobs: data.jobs,
     applications: data.applications,
   }))
@@ -259,6 +414,18 @@ export default async function DashboardPage() {
             data={{ hired: totalHired, total: totalApplications }}
           />
         </div>
+        {/* Users Trend & Jobs Status */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <UsersTrendChart data={usersTrendData} />
+          <JobsStatusChart data={jobsStatusData} />
+        </div>
+
+        {/* Hiring Funnel & Monthly Stacked */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <HiringFunnelChart data={hiringFunnelData} />
+          <MonthlyStackedChart data={monthlyData} />
+        </div>
+
       </div>
     </div>
   )
