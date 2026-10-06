@@ -1,0 +1,48 @@
+{
+  "common": {
+    "appName": "HireHub",
+    "loading": "در حال بارگذاری...",
+    "save": "ذخیره",
+    "cancel": "انصراف",
+    "delete": "حذف",
+    "edit": "ویرایش",
+    "search": "جستجو",
+    "submit": "ارسال",
+    "close": "بستن",
+    "back": "بازگشت"
+  },
+  "nav": {
+    "jobs": "آگهی‌ها",
+    "features": "ویژگی‌ها",
+    "how": "چطور کار می‌کند؟",
+    "contact": "تماس با ما",
+    "login": "ورود",
+    "register": "شروع کنید",
+    "dashboard": "داشبورد"
+  },
+  "home": {
+    "heroBadge": "پلتفرم استخدام نسل جدید",
+    "heroTitle": "استخدام هوشمند",
+    "heroHighlight": "با HireHub",
+    "heroDescription": "HireHub پلتفرمی مدرن برای اتصال کارجویان و استخدام‌کنندگان است.",
+    "startFree": "شروع رایگان",
+    "viewJobs": "مشاهده آگهی‌ها",
+    "statsActiveJobs": "آگهی فعال",
+    "statsUsers": "کاربر",
+    "statsApplications": "درخواست"
+  },
+  "auth": {
+    "login": "ورود",
+    "register": "ثبت‌نام",
+    "email": "ایمیل",
+    "password": "رمز عبور",
+    "name": "نام کامل",
+    "role": "نقش",
+    "loginTitle": "ورود به حساب کاربری",
+    "registerTitle": "ساخت حساب جدید",
+    "noAccount": "حساب کاربری ندارید؟",
+    "hasAccount": "قبلاً ثبت‌نام کرده‌اید؟",
+    "loggingIn": "در حال ورود...",
+    "registering": "در حال ثبت‌نام..."
+  }
+}

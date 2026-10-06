@@ -1,0 +1,48 @@
+{
+  "common": {
+    "appName": "HireHub",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "submit": "Submit",
+    "close": "Close",
+    "back": "Back"
+  },
+  "nav": {
+    "jobs": "Jobs",
+    "features": "Features",
+    "how": "How it Works",
+    "contact": "Contact Us",
+    "login": "Login",
+    "register": "Get Started",
+    "dashboard": "Dashboard"
+  },
+  "home": {
+    "heroBadge": "Next Generation Hiring Platform",
+    "heroTitle": "Smart Hiring",
+    "heroHighlight": "with HireHub",
+    "heroDescription": "HireHub is a modern platform connecting job seekers and recruiters.",
+    "startFree": "Start Free",
+    "viewJobs": "View Jobs",
+    "statsActiveJobs": "Active Jobs",
+    "statsUsers": "Users",
+    "statsApplications": "Applications"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full Name",
+    "role": "Role",
+    "loginTitle": "Sign in to your account",
+    "registerTitle": "Create new account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loggingIn": "Logging in...",
+    "registering": "Registering..."
+  }
+}

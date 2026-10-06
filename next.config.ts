@@ -1,4 +1,7 @@
 import type { NextConfig } from "next"
+import createNextIntlPlugin from "next-intl/plugin"
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts")
 
 const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
@@ -11,39 +14,22 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
-  // ✅ حذف console.log در Production
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-
-  // ✅ بهینه‌سازی تصاویر
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
-      { protocol: "https", hostname: "utfs.io" }, // UploadThing
+      { protocol: "https", hostname: "utfs.io" },
       { protocol: "https", hostname: "**.supabase.co" },
     ],
   },
-
-  // ✅ بهینه‌سازی پکیج‌ها
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts", "date-fns"],
   },
-
-  // ✅ Security Headers
   async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: securityHeaders,
-      },
-    ]
-  },
-
-  // ✅ Redirects
-  async redirects() {
-    return []
+    return [{ source: "/(.*)", headers: securityHeaders }]
   },
 }
 
-export default nextConfig
+export default withNextIntl(nextConfig)
