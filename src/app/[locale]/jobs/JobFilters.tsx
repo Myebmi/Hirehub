@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 export default function JobFilters({
   initialQuery,
@@ -14,12 +15,12 @@ export default function JobFilters({
 }) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const t = useTranslations("jobs")
 
   const [query, setQuery] = useState(initialQuery)
   const [type, setType] = useState(initialType)
   const [location, setLocation] = useState(initialLocation)
 
-  // Debounce برای جستجو
   useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString())
@@ -54,13 +55,13 @@ export default function JobFilters({
         {/* Search */}
         <div>
           <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-            جستجو
+            {t("search")}
           </label>
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="عنوان یا توضیحات..."
+            placeholder={t("searchPlaceholder")}
             className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
           />
         </div>
@@ -68,32 +69,32 @@ export default function JobFilters({
         {/* Type */}
         <div>
           <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-            نوع همکاری
+            {t("type")}
           </label>
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
             className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           >
-            <option value="">همه</option>
-            <option value="FULL_TIME">تمام‌وقت</option>
-            <option value="PART_TIME">پاره‌وقت</option>
-            <option value="REMOTE">دورکاری</option>
-            <option value="CONTRACT">قراردادی</option>
-            <option value="INTERNSHIP">کارآموزی</option>
+            <option value="">{t("allTypes")}</option>
+            <option value="FULL_TIME">Full Time</option>
+            <option value="PART_TIME">Part Time</option>
+            <option value="REMOTE">Remote</option>
+            <option value="CONTRACT">Contract</option>
+            <option value="INTERNSHIP">Internship</option>
           </select>
         </div>
 
         {/* Location */}
         <div>
           <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-            محل کار
+            {t("location")}
           </label>
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="مثلاً: کابل"
+            placeholder={t("locationPlaceholder")}
             className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
           />
         </div>
@@ -102,13 +103,13 @@ export default function JobFilters({
       {hasFilters && (
         <div className="mt-3 flex items-center justify-between">
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            فیلترها فعال هستن
+            ✓
           </span>
           <button
             onClick={clearFilters}
             className="text-xs text-red-600 hover:underline dark:text-red-400"
           >
-            پاک کردن فیلترها ✕
+            {t("clearFilters")} ✕
           </button>
         </div>
       )}

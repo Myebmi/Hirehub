@@ -1,17 +1,8 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/../auth"
+import { getTranslations } from "next-intl/server"
 import JobFilters from "./JobFilters"
-import type { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: "آگهی‌های شغلی",
-  description: "مشاهده همه آگهی‌های شغلی فعال در HireHub",
-  openGraph: {
-    title: "آگهی‌های شغلی | HireHub",
-    description: "مشاهده همه آگهی‌های شغلی فعال در HireHub",
-  },
-}
 
 export default async function JobsPage({
   searchParams,
@@ -20,20 +11,21 @@ export default async function JobsPage({
 }) {
   const params = await searchParams
   const session = await auth()
+  const t = await getTranslations("jobs")
+  const tNav = await getTranslations("nav")
 
   const query = params.q || ""
   const type = params.type || ""
   const location = params.location || ""
 
-  // ساخت Where clause
   const where: any = {
     status: "OPEN",
   }
 
   if (query) {
     where.OR = [
-      { title: { contains: query, mode: "insensitive" } },
-      { description: { contains: query, mode: "insensitive" } },
+      { title: { contains: query } },
+      { description: { contains: query } },
     ]
   }
 
@@ -42,7 +34,7 @@ export default async function JobsPage({
   }
 
   if (location) {
-    where.location = { contains: location, mode: "insensitive" }
+    where.location = { contains: location }
   }
 
   const jobs = await prisma.job.findMany({
@@ -64,19 +56,17 @@ export default async function JobsPage({
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold dark:text-white">
-              آگهی‌های شغلی
-            </h1>
+            <h1 className="text-3xl font-bold dark:text-white">{t("title")}</h1>
             <p className="mt-1 text-gray-600 dark:text-gray-400">
-              {jobs.length} آگهی پیدا شد
+              {jobs.length} {t("found")}
             </p>
           </div>
           {session?.user && (
             <Link
               href="/jobs/new"
-              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              className="rounded-md bg-blue-600 px-4 py-2 text-white shadow-lg shadow-blue-600/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-xl active:scale-95"
             >
-              + آگهی جدید
+              + {t("new")}
             </Link>
           )}
         </div>
@@ -92,9 +82,7 @@ export default async function JobsPage({
         {jobs.length === 0 ? (
           <div className="rounded-lg bg-white p-8 text-center shadow dark:bg-gray-800">
             <p className="text-gray-500 dark:text-gray-400">
-              {query || type || location
-                ? "هیچ آگهی‌ای با این فیلترها پیدا نشد"
-                : "هنوز آگهی‌ای ثبت نشده است"}
+              {query || type || location ? t("notFound") : t("empty")}
             </p>
           </div>
         ) : (
@@ -114,9 +102,9 @@ export default async function JobsPage({
                 <div className="mt-3 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                   <span>🏷️ {job.type}</span>
                   {job.salary && (
-                    <span>💰 {job.salary.toLocaleString()} افغانی</span>
+                    <span>💰 {job.salary.toLocaleString()}</span>
                   )}
-                  <span>👥 {job._count.applications} متقاضی</span>
+                  <span>👥 {job._count.applications} {t("applicants")}</span>
                 </div>
               </Link>
             ))}
