@@ -44,7 +44,7 @@ export async function updateUserRole(userId: string, formData: FormData) {
   }
 }
 
-// ==================== حذف کاربر ====================
+// ==================== حذف کاربر (با تمام وابستگی‌ها) ====================
 export async function deleteUser(userId: string) {
   try {
     const admin = await checkAdmin()
@@ -56,15 +56,69 @@ export async function deleteUser(userId: string) {
       return { success: false, error: "نمی‌توانید خودتان را حذف کنید" }
     }
 
+    // ✅ چک کن کاربر وجود داره
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true },
+    })
+
+    if (!user) {
+      return { success: false, error: "کاربر پیدا نشد" }
+    }
+
+    console.log("🗑️ Deleting user:", user.email)
+
+    // ==================== حذف وابستگی‌ها به ترتیب ====================
+
+    // ۱. حذف درخواست‌هایی که این کاربر (به عنوان applicant) فرستاده
+    const deletedApplications = await prisma.application.deleteMany({
+      where: { applicantId: userId },
+    })
+    console.log(`  - Deleted ${deletedApplications.count} applications (as applicant)`)
+
+    // ۲. حذف درخواست‌هایی که به آگهی‌های این کاربر (به عنوان recruiter) مربوط می‌شن
+    const deletedJobApplications = await prisma.application.deleteMany({
+      where: {
+        job: {
+          recruiterId: userId,
+        },
+      },
+    })
+    console.log(`  - Deleted ${deletedJobApplications.count} applications (on user's jobs)`)
+
+    // ۳. حذف آگهی‌های این کاربر
+    const deletedJobs = await prisma.job.deleteMany({
+      where: { recruiterId: userId },
+    })
+    console.log(`  - Deleted ${deletedJobs.count} jobs`)
+
+    // ۴. حذف Accountها (NextAuth)
+    const deletedAccounts = await prisma.account.deleteMany({
+      where: { userId },
+    })
+    console.log(`  - Deleted ${deletedAccounts.count} accounts`)
+
+    // ۵. حذف Sessionها (NextAuth)
+    const deletedSessions = await prisma.session.deleteMany({
+      where: { userId },
+    })
+    console.log(`  - Deleted ${deletedSessions.count} sessions`)
+
+    // ۶. حالا خود کاربر رو حذف کن
     await prisma.user.delete({
       where: { id: userId },
     })
+    console.log(`  ✅ User ${user.email} deleted successfully`)
 
     revalidatePath("/admin")
+    revalidatePath("/jobs")
     return { success: true }
   } catch (error) {
-    console.error("Delete user error:", error)
-    return { success: false, error: "خطایی رخ داد" }
+    console.error("❌ Delete user error:", error)
+    return {
+      success: false,
+      error: "خطا در حذف کاربر. لطفاً دوباره تلاش کنید.",
+    }
   }
 }
 
@@ -96,7 +150,7 @@ export async function updateJobStatus(jobId: string, formData: FormData) {
   }
 }
 
-// ==================== حذف آگهی ====================
+// ==================== حذف آگهی (با درخواست‌های مرتبط) ====================
 export async function deleteJobAdmin(jobId: string) {
   try {
     const admin = await checkAdmin()
@@ -104,15 +158,38 @@ export async function deleteJobAdmin(jobId: string) {
       return { success: false, error: "دسترسی ندارید" }
     }
 
+    // ✅ چک کن آگهی وجود داره
+    const job = await prisma.job.findUnique({
+      where: { id: jobId },
+      select: { id: true, title: true },
+    })
+
+    if (!job) {
+      return { success: false, error: "آگهی پیدا نشد" }
+    }
+
+    console.log("🗑️ Deleting job:", job.title)
+
+    // ✅ اول درخواست‌های مرتبط رو حذف کن
+    const deletedApps = await prisma.application.deleteMany({
+      where: { jobId },
+    })
+    console.log(`  - Deleted ${deletedApps.count} related applications`)
+
+    // ✅ حالا آگهی رو حذف کن
     await prisma.job.delete({
       where: { id: jobId },
     })
+    console.log(`  ✅ Job "${job.title}" deleted successfully`)
 
     revalidatePath("/admin")
     revalidatePath("/jobs")
     return { success: true }
   } catch (error) {
-    console.error("Delete job error:", error)
-    return { success: false, error: "خطایی رخ داد" }
+    console.error("❌ Delete job error:", error)
+    return {
+      success: false,
+      error: "خطا در حذف آگهی. لطفاً دوباره تلاش کنید.",
+    }
   }
 }
