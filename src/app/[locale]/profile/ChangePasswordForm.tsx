@@ -1,10 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { changePassword } from "@/actions/profile"
 
 export default function ChangePasswordForm() {
+  const t = useTranslations("profile")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -17,13 +19,11 @@ export default function ChangePasswordForm() {
     const result = await changePassword(formData)
 
     if (result.success) {
-      toast.success("رمز عبور با موفقیت تغییر کرد! 🔐")
+      toast.success("✅")
       ;(e.target as HTMLFormElement).reset()
     } else {
-      setError(result.error || "خطایی رخ داد")
-      toast.error("خطا در تغییر رمز", {
-        description: result.error || "لطفاً دوباره تلاش کنید",
-      })
+      setError(result.error || "Error")
+      toast.error("Error", { description: result.error })
     }
     setLoading(false)
   }
@@ -33,14 +33,16 @@ export default function ChangePasswordForm() {
       onSubmit={handleSubmit}
       className="space-y-4 rounded-lg bg-white p-6 shadow dark:bg-gray-800"
     >
-      <h2 className="text-lg font-semibold dark:text-white">تغییر رمز عبور</h2>
+      <h2 className="text-lg font-semibold dark:text-white">
+        {t("changePassword")}
+      </h2>
 
       <div>
         <label
           htmlFor="currentPassword"
           className="block text-sm font-medium dark:text-gray-300"
         >
-          رمز فعلی
+          {t("currentPassword")}
         </label>
         <input
           id="currentPassword"
@@ -56,7 +58,7 @@ export default function ChangePasswordForm() {
           htmlFor="newPassword"
           className="block text-sm font-medium dark:text-gray-300"
         >
-          رمز جدید
+          {t("newPassword")}
         </label>
         <input
           id="newPassword"
@@ -73,7 +75,7 @@ export default function ChangePasswordForm() {
           htmlFor="confirmPassword"
           className="block text-sm font-medium dark:text-gray-300"
         >
-          تکرار رمز جدید
+          {t("confirmPassword")}
         </label>
         <input
           id="confirmPassword"
@@ -94,9 +96,9 @@ export default function ChangePasswordForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700 disabled:opacity-50"
+        className="w-full rounded-md bg-blue-600 p-2 text-white shadow-lg shadow-blue-600/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-xl active:scale-95 disabled:opacity-50"
       >
-        {loading ? "در حال تغییر..." : "تغییر رمز عبور"}
+        {loading ? t("updating") : t("updatePassword")}
       </button>
     </form>
   )

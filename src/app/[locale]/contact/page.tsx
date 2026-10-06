@@ -1,18 +1,21 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import { getTranslations } from "next-intl/server"
+import { Link } from "@/i18n/navigation"
 import ContactForm from "./ContactForm"
 import ThemeToggle from "@/components/ThemeToggle"
+import LanguageSwitcher from "@/components/LanguageSwitcher"
 
-export const metadata: Metadata = {
-  title: "تماس با ما",
-  description: "با تیم HireHub در تماس باشید. سوالات، پیشنهادات و انتقادات خود را با ما در میان بگذارید.",
-  openGraph: {
-    title: "تماس با ما | HireHub",
-    description: "با تیم HireHub در تماس باشید",
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("contact")
+  return {
+    title: t("title"),
+    description: t("subtitle"),
+  }
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const t = await getTranslations("contact")
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-6 lg:p-8 dark:from-blue-950/20 dark:via-gray-950 dark:to-purple-950/20">
       <div className="mx-auto max-w-2xl">
@@ -22,19 +25,22 @@ export default function ContactPage() {
             href="/"
             className="text-blue-600 hover:underline dark:text-blue-400"
           >
-            ← بازگشت به صفحه اصلی
+            ← {t("title")}
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Title */}
         <div className="animate-fade-in mb-8 text-center">
           <div className="mb-4 text-6xl">📬</div>
           <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
-            تماس با ما
+            {t("title")}
           </h1>
           <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
-            سوال، پیشنهاد یا انتقادی داری؟ خوشحال می‌شیم بشنویم.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -46,30 +52,30 @@ export default function ContactPage() {
           <div className="rounded-lg bg-white p-4 text-center shadow dark:bg-gray-800">
             <div className="text-3xl">📧</div>
             <div className="mt-2 text-sm font-medium dark:text-gray-300">
-              ایمیل
+              {t("infoEmail")}
             </div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              Myebmi@outlook.com
+              info@hirehub.com
             </div>
           </div>
 
           <div className="rounded-lg bg-white p-4 text-center shadow dark:bg-gray-800">
             <div className="text-3xl">📍</div>
             <div className="mt-2 text-sm font-medium dark:text-gray-300">
-              آدرس
+              {t("infoAddress")}
             </div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              کابل، افغانستان
+              {t("infoAddressValue")}
             </div>
           </div>
 
           <div className="rounded-lg bg-white p-4 text-center shadow dark:bg-gray-800">
             <div className="text-3xl">💬</div>
             <div className="mt-2 text-sm font-medium dark:text-gray-300">
-              پاسخ‌دهی
+              {t("infoResponse")}
             </div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              ۲۴ ساعت
+              {t("infoResponseValue")}
             </div>
           </div>
         </div>

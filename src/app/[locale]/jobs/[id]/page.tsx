@@ -130,7 +130,7 @@ export default async function JobDetailPage({
           <div className="mt-6 border-t pt-4 text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
             <p>ثبت‌کننده: {job.recruiter.name}</p>
             <p>
-              تاریخ ثبت: {new Date(job.createdAt).toLocaleDateString("fa-IR")}
+              تاریخ ثبت: {new Date(job.createdAt).toLocaleDateString("en-US")}
             </p>
             <p>تعداد متقاضیان: {job._count.applications}</p>
           </div>

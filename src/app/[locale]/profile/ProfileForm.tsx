@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { updateProfile } from "@/actions/profile"
 
@@ -11,6 +12,7 @@ export default function ProfileForm({
   user: { name: string; email: string }
 }) {
   const router = useRouter()
+  const t = useTranslations("profile")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -23,13 +25,11 @@ export default function ProfileForm({
     const result = await updateProfile(formData)
 
     if (result.success) {
-      toast.success("پروفایل با موفقیت به‌روزرسانی شد! ✅")
+      toast.success("✅")
       router.refresh()
     } else {
-      setError(result.error || "خطایی رخ داد")
-      toast.error("خطا در به‌روزرسانی", {
-        description: result.error || "لطفاً دوباره تلاش کنید",
-      })
+      setError(result.error || "Error")
+      toast.error("Error", { description: result.error })
     }
     setLoading(false)
   }
@@ -40,7 +40,7 @@ export default function ProfileForm({
       className="space-y-4 rounded-lg bg-white p-6 shadow dark:bg-gray-800"
     >
       <h2 className="text-lg font-semibold dark:text-white">
-        اطلاعات شخصی
+        {t("personalInfo")}
       </h2>
 
       <div>
@@ -48,7 +48,7 @@ export default function ProfileForm({
           htmlFor="name"
           className="block text-sm font-medium dark:text-gray-300"
         >
-          نام کامل
+          {t("name")}
         </label>
         <input
           id="name"
@@ -65,7 +65,7 @@ export default function ProfileForm({
           htmlFor="email"
           className="block text-sm font-medium dark:text-gray-300"
         >
-          ایمیل
+          {t("email")}
         </label>
         <input
           id="email"
@@ -86,9 +86,9 @@ export default function ProfileForm({
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700 disabled:opacity-50"
+        className="w-full rounded-md bg-blue-600 p-2 text-white shadow-lg shadow-blue-600/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-xl active:scale-95 disabled:opacity-50"
       >
-        {loading ? "در حال ذخیره..." : "ذخیره تغییرات"}
+        {loading ? t("saving") : t("saveChanges")}
       </button>
     </form>
   )

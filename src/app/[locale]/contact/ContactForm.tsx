@@ -1,10 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { sendContactMessage } from "@/actions/contact"
 
 export default function ContactForm() {
+  const t = useTranslations("contact")
+  const tCommon = useTranslations("common")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -18,15 +21,15 @@ export default function ContactForm() {
     const result = await sendContactMessage(formData)
 
     if (result.success) {
-      toast.success("پیام شما با موفقیت ارسال شد! 🎉", {
-        description: "به‌زودی با شما تماس می‌گیریم.",
+      toast.success(t("successTitle"), {
+        description: t("successMessage"),
       })
       setSuccess(true)
       ;(e.target as HTMLFormElement).reset()
     } else {
-      setError(result.error || "خطایی رخ داد")
-      toast.error("خطا در ارسال پیام", {
-        description: result.error || "لطفاً دوباره تلاش کنید",
+      setError(result.error || t("errorGeneric"))
+      toast.error(t("errorGeneric"), {
+        description: result.error,
       })
     }
     setLoading(false)
@@ -37,16 +40,16 @@ export default function ContactForm() {
       <div className="animate-scale-in rounded-lg bg-white p-8 text-center shadow dark:bg-gray-800">
         <div className="mb-4 text-6xl">✅</div>
         <h2 className="mb-2 text-2xl font-bold dark:text-white">
-          پیام شما ارسال شد!
+          {t("successTitle")}
         </h2>
         <p className="mb-6 text-gray-600 dark:text-gray-400">
-          ممنون از پیام شما. به‌زودی با شما تماس می‌گیریم.
+          {t("successMessage")}
         </p>
         <button
           onClick={() => setSuccess(false)}
           className="rounded-md bg-blue-600 px-6 py-2 text-white shadow-lg shadow-blue-600/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-xl active:scale-95"
         >
-          ارسال پیام جدید
+          {t("newMessage")}
         </button>
       </div>
     )
@@ -64,7 +67,7 @@ export default function ContactForm() {
             htmlFor="name"
             className="block text-sm font-medium dark:text-gray-300"
           >
-            نام کامل *
+            {t("name")} *
           </label>
           <input
             id="name"
@@ -72,7 +75,7 @@ export default function ContactForm() {
             type="text"
             required
             className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-            placeholder="نام شما"
+            placeholder={t("namePlaceholder")}
           />
         </div>
 
@@ -82,7 +85,7 @@ export default function ContactForm() {
             htmlFor="email"
             className="block text-sm font-medium dark:text-gray-300"
           >
-            ایمیل *
+            {t("email")} *
           </label>
           <input
             id="email"
@@ -90,7 +93,7 @@ export default function ContactForm() {
             type="email"
             required
             className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-            placeholder="you@example.com"
+            placeholder={t("emailPlaceholder")}
           />
         </div>
       </div>
@@ -101,7 +104,7 @@ export default function ContactForm() {
           htmlFor="subject"
           className="block text-sm font-medium dark:text-gray-300"
         >
-          موضوع *
+          {t("subject")} *
         </label>
         <input
           id="subject"
@@ -109,7 +112,7 @@ export default function ContactForm() {
           type="text"
           required
           className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-          placeholder="موضوع پیام"
+          placeholder={t("subjectPlaceholder")}
         />
       </div>
 
@@ -119,7 +122,7 @@ export default function ContactForm() {
           htmlFor="message"
           className="block text-sm font-medium dark:text-gray-300"
         >
-          پیام *
+          {t("message")} *
         </label>
         <textarea
           id="message"
@@ -127,7 +130,7 @@ export default function ContactForm() {
           required
           rows={5}
           className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-          placeholder="پیام خود را بنویسید..."
+          placeholder={t("messagePlaceholder")}
         />
       </div>
 
@@ -142,11 +145,11 @@ export default function ContactForm() {
         disabled={loading}
         className="w-full rounded-md bg-blue-600 p-3 text-white shadow-lg shadow-blue-600/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/50 active:scale-95 disabled:opacity-50"
       >
-        {loading ? "در حال ارسال..." : "📧 ارسال پیام"}
+        {loading ? t("sending") : `📧 ${t("send")}`}
       </button>
 
       <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-        با ارسال پیام، با قوانین HireHub موافقت می‌کنید.
+        ✓
       </p>
     </form>
   )

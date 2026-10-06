@@ -11,9 +11,10 @@ export default function ThemeToggle() {
     setMounted(true)
   }, [])
 
+  // ✅ جلوگیری از Hydration Mismatch
   if (!mounted) {
     return (
-      <button 
+      <button
         className="rounded-md bg-gray-100 p-2 dark:bg-gray-800"
         aria-label="Toggle theme"
       >

@@ -95,7 +95,7 @@ export default async function MyApplicationsPage() {
                         📍 {app.job.location}
                       </p>
                       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        تاریخ درخواست: {new Date(app.createdAt).toLocaleDateString("fa-IR")}
+                        تاریخ درخواست: {new Date(app.createdAt).toLocaleDateString("en-US")}
                       </p>
                     </div>
                     <span

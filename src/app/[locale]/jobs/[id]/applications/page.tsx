@@ -78,7 +78,7 @@ export default async function JobApplicationsPage({
                       {app.applicant.email}
                     </p>
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      تاریخ: {new Date(app.createdAt).toLocaleDateString("fa-IR")}
+                      تاریخ: {new Date(app.createdAt).toLocaleDateString("en-US")}
                     </p>
                   </div>
                   <ApplicationStatusForm
