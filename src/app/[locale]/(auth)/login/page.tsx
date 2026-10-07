@@ -58,7 +58,7 @@ function LoginForm() {
             placeholder={t("emailPlaceholder")}
           />
         </div>
-
+          
         <div>
           <label htmlFor="password" className="block text-sm font-medium dark:text-gray-300">
             {t("password")}
@@ -74,6 +74,15 @@ function LoginForm() {
           />
         </div>
 
+        <div className="text-right">
+          <Link
+             href="/forgot-password"
+             className="text-xs text-blue-600 hover:underline dark:text-blue-400"
+           >
+           رمز عبور را فراموش کرده‌اید؟
+         </Link>
+        </div>
+            
         {error && (
           <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
             {error}
