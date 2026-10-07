@@ -2,9 +2,12 @@ import Link from "next/link"
 import { auth } from "@/../auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
+import { getTranslations } from "next-intl/server"
 import LogoutButton from "@/components/LogoutButton"
 import StatsCards from "@/components/stats/StatsCards"
 import ThemeToggle from "@/components/ThemeToggle"
+import NotificationBell from "@/components/NotificationBell"
+import LanguageSwitcher from "@/components/LanguageSwitcher"
 import { toAfghanDate } from "@/lib/afghanDate"
 import {
   ApplicationsChart,
@@ -20,6 +23,8 @@ import {
 
 export default async function DashboardPage() {
   const session = await auth()
+  const t = await getTranslations("dashboard")
+  const tNav = await getTranslations("nav")
 
   if (!session) {
     redirect("/login")
@@ -28,7 +33,6 @@ export default async function DashboardPage() {
   const isRecruiter =
     session.user?.role === "RECRUITER" || session.user?.role === "ADMIN"
 
-  // همه Queryها رو موازی اجرا کن
   const [
     totalJobs,
     totalApplications,
@@ -59,14 +63,12 @@ export default async function DashboardPage() {
     }),
   ])
 
-  // ============ نمودار روند درخواست‌ها (۳۰ روز اخیر) ============
+  // نمودار روند درخواست‌ها (۳۰ روز اخیر)
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
   const applicationsTrend = await prisma.application.findMany({
-    where: {
-      createdAt: { gte: thirtyDaysAgo },
-    },
+    where: { createdAt: { gte: thirtyDaysAgo } },
     select: { createdAt: true },
   })
 
@@ -90,7 +92,7 @@ export default async function DashboardPage() {
     count,
   }))
 
-  // ============ آمار هفتگی ============
+  // آمار هفتگی
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
@@ -106,15 +108,7 @@ export default async function DashboardPage() {
   ])
 
   const weeklyMap = new Map<string, { jobs: number; applications: number }>()
-  const dayNames = [
-    "یک‌شنبه",
-    "دوشنبه",
-    "سه‌شنبه",
-    "چهارشنبه",
-    "پنج‌شنبه",
-    "جمعه",
-    "شنبه",
-  ]
+  const dayNames = ["یک‌شنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"]
 
   for (let i = 6; i >= 0; i--) {
     const date = new Date()
@@ -135,10 +129,7 @@ export default async function DashboardPage() {
     const dayName = dayNames[app.createdAt.getDay()]
     const current = weeklyMap.get(dayName)
     if (current) {
-      weeklyMap.set(dayName, {
-        ...current,
-        applications: current.applications + 1,
-      })
+      weeklyMap.set(dayName, { ...current, applications: current.applications + 1 })
     }
   })
 
@@ -148,14 +139,12 @@ export default async function DashboardPage() {
     applications: data.applications,
   }))
 
-  // ============ نمودار روند کاربران (۳۰ روز اخیر) ============
+  // نمودار روند کاربران
   const thirtyDaysAgo2 = new Date()
   thirtyDaysAgo2.setDate(thirtyDaysAgo2.getDate() - 30)
 
   const usersTrend = await prisma.user.findMany({
-    where: {
-      createdAt: { gte: thirtyDaysAgo2 },
-    },
+    where: { createdAt: { gte: thirtyDaysAgo2 } },
     select: { createdAt: true },
   })
 
@@ -174,11 +163,9 @@ export default async function DashboardPage() {
     }
   })
 
-  const usersTrendData = Array.from(usersTrendMap.entries()).map(
-    ([date, count]) => ({ date, count })
-  )
+  const usersTrendData = Array.from(usersTrendMap.entries()).map(([date, count]) => ({ date, count }))
 
-  // ============ وضعیت آگهی‌ها ============
+  // وضعیت آگهی‌ها
   const [openJobs, draftJobs, closedJobs] = await Promise.all([
     prisma.job.count({ where: { status: "OPEN" } }),
     prisma.job.count({ where: { status: "DRAFT" } }),
@@ -186,19 +173,13 @@ export default async function DashboardPage() {
   ])
 
   const jobsStatusData = [
-    { name: "باز", value: openJobs, color: "#10b981" },
-    { name: "پیش‌نویس", value: draftJobs, color: "#f59e0b" },
-    { name: "بسته", value: closedJobs, color: "#ef4444" },
+    { name: t("charts.jobsStatus"), value: openJobs, color: "#10b981" },
+    { name: "Draft", value: draftJobs, color: "#f59e0b" },
+    { name: "Closed", value: closedJobs, color: "#ef4444" },
   ]
 
-  // ============ قیف استخدام ============
-  const [
-    pendingCount,
-    reviewingCount,
-    interviewCount,
-    rejectedCount,
-    hiredCount,
-  ] = await Promise.all([
+  // قیف استخدام
+  const [pendingCount, reviewingCount, interviewCount, rejectedCount, hiredCount] = await Promise.all([
     prisma.application.count({ where: { status: "PENDING" } }),
     prisma.application.count({ where: { status: "REVIEWING" } }),
     prisma.application.count({ where: { status: "INTERVIEW" } }),
@@ -207,28 +188,15 @@ export default async function DashboardPage() {
   ])
 
   const hiringFunnelData = [
-    { status: "در انتظار", count: pendingCount, fill: "#f59e0b" },
-    { status: "بررسی", count: reviewingCount, fill: "#3b82f6" },
-    { status: "مصاحبه", count: interviewCount, fill: "#8b5cf6" },
-    { status: "استخدام", count: hiredCount, fill: "#10b981" },
-    { status: "رد شده", count: rejectedCount, fill: "#ef4444" },
+    { status: "Pending", count: pendingCount, fill: "#f59e0b" },
+    { status: "Reviewing", count: reviewingCount, fill: "#3b82f6" },
+    { status: "Interview", count: interviewCount, fill: "#8b5cf6" },
+    { status: "Hired", count: hiredCount, fill: "#10b981" },
+    { status: "Rejected", count: rejectedCount, fill: "#ef4444" },
   ]
 
-  // ============ فعالیت ماهانه (۶ ماه اخیر) ============
-  const afghanMonths = [
-    "حمل",
-    "ثور",
-    "جوزا",
-    "سرطان",
-    "اسد",
-    "سنبله",
-    "میزان",
-    "عقرب",
-    "قوس",
-    "جدی",
-    "دلو",
-    "حوت",
-  ]
+  // فعالیت ماهانه
+  const afghanMonths = ["حمل", "ثور", "جوزا", "سرطان", "اسد", "سنبله", "میزان", "عقرب", "قوس", "جدی", "دلو", "حوت"]
 
   const sixMonthsAgo = new Date()
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
@@ -248,10 +216,7 @@ export default async function DashboardPage() {
     }),
   ])
 
-  const monthlyMap = new Map<
-    string,
-    { users: number; jobs: number; applications: number }
-  >()
+  const monthlyMap = new Map<string, { users: number; jobs: number; applications: number }>()
 
   for (let i = 5; i >= 0; i--) {
     const date = new Date()
@@ -266,30 +231,21 @@ export default async function DashboardPage() {
     const monthIndex = (u.createdAt.getMonth() + 8) % 12
     const monthName = afghanMonths[monthIndex]
     const current = monthlyMap.get(monthName)
-    if (current) {
-      monthlyMap.set(monthName, { ...current, users: current.users + 1 })
-    }
+    if (current) monthlyMap.set(monthName, { ...current, users: current.users + 1 })
   })
 
   monthlyJobs.forEach((j) => {
     const monthIndex = (j.createdAt.getMonth() + 8) % 12
     const monthName = afghanMonths[monthIndex]
     const current = monthlyMap.get(monthName)
-    if (current) {
-      monthlyMap.set(monthName, { ...current, jobs: current.jobs + 1 })
-    }
+    if (current) monthlyMap.set(monthName, { ...current, jobs: current.jobs + 1 })
   })
 
   monthlyApps.forEach((a) => {
     const monthIndex = (a.createdAt.getMonth() + 8) % 12
     const monthName = afghanMonths[monthIndex]
     const current = monthlyMap.get(monthName)
-    if (current) {
-      monthlyMap.set(monthName, {
-        ...current,
-        applications: current.applications + 1,
-      })
-    }
+    if (current) monthlyMap.set(monthName, { ...current, applications: current.applications + 1 })
   })
 
   const monthlyData = Array.from(monthlyMap.entries()).map(([month, data]) => ({
@@ -301,47 +257,43 @@ export default async function DashboardPage() {
 
   // داده‌های نمودار میله‌ای
   const statusLabels: Record<string, string> = {
-    PENDING: "در انتظار",
-    REVIEWING: "بررسی",
-    INTERVIEW: "مصاحبه",
-    REJECTED: "رد شده",
-    HIRED: "استخدام",
+    PENDING: "Pending",
+    REVIEWING: "Reviewing",
+    INTERVIEW: "Interview",
+    REJECTED: "Rejected",
+    HIRED: "Hired",
   }
 
-  const applicationsData = statusCounts.map(
-    (s: { status: string; _count: number }) => ({
-      name: statusLabels[s.status] || s.status,
-      count: s._count,
-    })
-  )
+  const applicationsData = statusCounts.map((s: { status: string; _count: number }) => ({
+    name: statusLabels[s.status] || s.status,
+    count: s._count,
+  }))
 
   // داده‌های نمودار دایره‌ای
   const roleLabels: Record<string, string> = {
-    ADMIN: "ادمین",
-    RECRUITER: "استخدام‌کننده",
-    CANDIDATE: "کارجو",
+    ADMIN: "Admin",
+    RECRUITER: "Recruiter",
+    CANDIDATE: "Candidate",
   }
 
-  const usersData = roleCounts.map(
-    (r: { role: string; _count: number }) => ({
-      name: roleLabels[r.role] || r.role,
-      value: r._count,
-    })
-  )
+  const usersData = roleCounts.map((r: { role: string; _count: number }) => ({
+    name: roleLabels[r.role] || r.role,
+    value: r._count,
+  }))
 
   // کارت‌های آمار
   const stats = isRecruiter
     ? [
-        { title: "آگهی‌های من", value: myJobs, icon: "💼", color: "text-blue-500" },
-        { title: "کل آگهی‌ها", value: totalJobs, icon: "📋", color: "text-purple-500" },
-        { title: "کل درخواست‌ها", value: totalApplications, icon: "📨", color: "text-yellow-500" },
-        { title: "استخدام شده", value: totalHired, icon: "✅", color: "text-green-500" },
+        { title: t("myJobs"), value: myJobs, icon: "💼", color: "text-blue-500" },
+        { title: t("totalJobs"), value: totalJobs, icon: "📋", color: "text-purple-500" },
+        { title: t("totalApplications"), value: totalApplications, icon: "📨", color: "text-yellow-500" },
+        { title: t("hired"), value: totalHired, icon: "✅", color: "text-green-500" },
       ]
     : [
-        { title: "کل آگهی‌ها", value: totalJobs, icon: "💼", color: "text-blue-500" },
-        { title: "درخواست‌های من", value: myApplications, icon: "📨", color: "text-yellow-500" },
-        { title: "کل کاربران", value: totalUsers, icon: "👥", color: "text-purple-500" },
-        { title: "استخدام شده", value: totalHired, icon: "✅", color: "text-green-500" },
+        { title: t("totalJobs"), value: totalJobs, icon: "💼", color: "text-blue-500" },
+        { title: t("myApplications"), value: myApplications, icon: "📨", color: "text-yellow-500" },
+        { title: t("totalUsers"), value: totalUsers, icon: "👥", color: "text-purple-500" },
+        { title: t("hired"), value: totalHired, icon: "✅", color: "text-green-500" },
       ]
 
   return (
@@ -350,12 +302,14 @@ export default async function DashboardPage() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between rounded-lg bg-white p-6 shadow dark:bg-gray-800">
           <div>
-            <h1 className="text-2xl font-bold dark:text-white">داشبورد HireHub</h1>
+            <h1 className="text-2xl font-bold dark:text-white">{t("title")}</h1>
             <p className="mt-1 text-gray-600 dark:text-gray-400">
-              خوش آمدی، {session.user?.name}
+              {t("welcome")}، {session.user?.name}
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <NotificationBell />
+            <LanguageSwitcher />
             <ThemeToggle />
             <LogoutButton />
           </div>
@@ -370,9 +324,9 @@ export default async function DashboardPage() {
             href="/jobs"
             className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
           >
-            <h2 className="text-lg font-semibold dark:text-white">💼 آگهی‌ها</h2>
+            <h2 className="text-lg font-semibold dark:text-white">💼 {tNav("jobs")}</h2>
             <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-              مشاهده همه آگهی‌ها
+              {t("viewJobs")}
             </p>
           </Link>
 
@@ -380,9 +334,11 @@ export default async function DashboardPage() {
             href="/my-applications"
             className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
           >
-            <h2 className="text-lg font-semibold dark:text-white">📋 درخواست‌های من</h2>
+            <h2 className="text-lg font-semibold dark:text-white">
+              📋 {t("myApplications")}
+            </h2>
             <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-              درخواست‌های فرستاده
+              {t("myApplicationsCard")}
             </p>
           </Link>
 
@@ -390,9 +346,11 @@ export default async function DashboardPage() {
             href="/profile"
             className="rounded-lg bg-white p-6 shadow transition hover:shadow-md dark:bg-gray-800"
           >
-            <h2 className="text-lg font-semibold dark:text-white">👤 پروفایل</h2>
+            <h2 className="text-lg font-semibold dark:text-white">
+              👤 {t("profileCard")}
+            </h2>
             <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-              ویرایش اطلاعات کاربری
+              {t("profileCard")}
             </p>
           </Link>
 
@@ -401,8 +359,8 @@ export default async function DashboardPage() {
               href="/jobs/new"
               className="rounded-lg bg-blue-600 p-6 text-white shadow transition hover:bg-blue-700"
             >
-              <h2 className="text-lg font-semibold">➕ آگهی جدید</h2>
-              <p className="mt-1 text-sm opacity-90">ثبت موقعیت شغلی</p>
+              <h2 className="text-lg font-semibold">➕ {t("newJob")}</h2>
+              <p className="mt-1 text-sm opacity-90">{t("newJob")}</p>
             </Link>
           )}
         </div>
@@ -413,25 +371,20 @@ export default async function DashboardPage() {
           <UsersPieChart data={usersData} />
         </div>
 
-        {/* Advanced Charts */}
         <div className="mt-6">
           <ApplicationsTrendChart data={trendData} />
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <WeeklyStatsChart data={weeklyData} />
-          <HiringRateChart
-            data={{ hired: totalHired, total: totalApplications }}
-          />
+          <HiringRateChart data={{ hired: totalHired, total: totalApplications }} />
         </div>
 
-        {/* Users Trend & Jobs Status */}
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <UsersTrendChart data={usersTrendData} />
           <JobsStatusChart data={jobsStatusData} />
         </div>
 
-        {/* Hiring Funnel & Monthly Stacked */}
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <HiringFunnelChart data={hiringFunnelData} />
           <MonthlyStackedChart data={monthlyData} />

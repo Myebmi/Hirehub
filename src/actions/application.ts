@@ -1,11 +1,16 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
-import { applicationSchema, updateApplicationStatusSchema } from "@/lib/validations/application"
+import {
+  applicationSchema,
+  updateApplicationStatusSchema,
+} from "@/lib/validations/application"
 import { auth } from "@/../auth"
 import { revalidatePath } from "next/cache"
-import { sendApplicationStatusEmail } from "@/lib/email"
-import { sendNewApplicationEmail } from "@/lib/email"
+import {
+  sendApplicationStatusEmail,
+  sendNewApplicationEmail,
+} from "@/lib/email"
 
 export async function applyToJob(formData: FormData) {
   try {
@@ -50,7 +55,10 @@ export async function applyToJob(formData: FormData) {
     })
 
     if (existing) {
-      return { success: false, error: "شما قبلاً برای این آگهی درخواست داده‌اید" }
+      return {
+        success: false,
+        error: "شما قبلاً برای این آگهی درخواست داده‌اید",
+      }
     }
 
     await prisma.application.create({
@@ -61,21 +69,35 @@ export async function applyToJob(formData: FormData) {
         resumeUrl: resumeUrl || null,
       },
     })
-    // ✅ ایمیل به Recruiter
+
+    // ✅ اعلان به Recruiter
     const jobWithRecruiter = await prisma.job.findUnique({
       where: { id: jobId },
       include: { recruiter: true },
     })
 
-    if (jobWithRecruiter?.recruiter?.email) {
-      await sendNewApplicationEmail(
-        jobWithRecruiter.recruiter.email,
-        jobWithRecruiter.recruiter.name || "استخدام‌کننده",
-        session.user.name || "کاربر",
-        jobWithRecruiter.title
-      )
+    if (jobWithRecruiter?.recruiter) {
+      await prisma.notification.create({
+        data: {
+          userId: jobWithRecruiter.recruiterId,
+          type: "NEW_APPLICATION",
+          title: "درخواست جدید 📨",
+          message: `${session.user.name} برای «${jobWithRecruiter.title}» درخواست فرستاد.`,
+          link: `/jobs/${jobId}/applications`,
+        },
+      })
+
+      // ✅ ایمیل به Recruiter
+      if (jobWithRecruiter.recruiter.email) {
+        await sendNewApplicationEmail(
+          jobWithRecruiter.recruiter.email,
+          jobWithRecruiter.recruiter.name || "استخدام‌کننده",
+          session.user.name || "کاربر",
+          jobWithRecruiter.title
+        )
+      }
     }
-    
+
     revalidatePath(`/jobs/${jobId}`)
     revalidatePath("/my-applications")
     return { success: true }
@@ -118,7 +140,29 @@ export async function updateApplicationStatus(
       where: { id: applicationId },
       data: { status: parsed.data.status },
     })
-     // ✅ ایمیل به کارجو
+
+    // ✅ اعلان به کارجو
+    const statusLabels: Record<string, string> = {
+      PENDING: "در انتظار",
+      REVIEWING: "در حال بررسی",
+      INTERVIEW: "مصاحبه",
+      REJECTED: "رد شده",
+      HIRED: "استخدام شده",
+    }
+
+    await prisma.notification.create({
+      data: {
+        userId: application.applicantId,
+        type: "APPLICATION_STATUS",
+        title: "وضعیت درخواست تغییر کرد 📋",
+        message: `وضعیت درخواست شما برای «${application.job.title}» به «${
+          statusLabels[parsed.data.status] || parsed.data.status
+        }» تغییر کرد.`,
+        link: "/my-applications",
+      },
+    })
+
+    // ✅ ایمیل به کارجو
     const applicant = await prisma.user.findUnique({
       where: { id: application.applicantId },
     })
@@ -133,6 +177,7 @@ export async function updateApplicationStatus(
     }
 
     revalidatePath(`/jobs/${application.jobId}/applications`)
+    revalidatePath("/my-applications")
     return { success: true }
   } catch (error) {
     console.error("Update application status error:", error)

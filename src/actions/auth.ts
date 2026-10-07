@@ -72,6 +72,17 @@ export async function registerUser(formData: FormData) {
       },
     })
 
+    // ✅ اعلان خوش‌آمد
+    await prisma.notification.create({
+      data: {
+        userId: user.id,
+        type: "WELCOME",
+        title: "خوش آمدید! 🎉",
+        message: "به HireHub خوش آمدید. پروفایل خود را کامل کنید.",
+        link: "/profile",
+      },
+    })
+
     // ✅ ایمیل خوش‌آمد
     try {
       console.log("📧 Attempting to send welcome email to:", email)
