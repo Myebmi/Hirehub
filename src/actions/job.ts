@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { jobSchema } from "@/lib/validations/job"
 import { auth } from "@/../auth"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 
 export async function createJob(formData: FormData) {
   try {
@@ -37,6 +37,7 @@ export async function createJob(formData: FormData) {
     })
 
     revalidatePath("/jobs")
+    revalidateTag("dashboard")  // ✅ Cache Dashboard رو پاک کن
     return { success: true, jobId: job.id }
   } catch (error) {
     console.error("Create job error:", error)
@@ -84,6 +85,7 @@ export async function updateJob(jobId: string, formData: FormData) {
 
     revalidatePath("/jobs")
     revalidatePath(`/jobs/${jobId}`)
+    revalidateTag("dashboard")  // ✅ Cache Dashboard رو پاک کن
     return { success: true }
   } catch (error) {
     console.error("Update job error:", error)
@@ -111,6 +113,7 @@ export async function deleteJob(jobId: string) {
     })
 
     revalidatePath("/jobs")
+    revalidateTag("dashboard")  // ✅ Cache Dashboard رو پاک کن
     return { success: true }
   } catch (error) {
     console.error("Delete job error:", error)

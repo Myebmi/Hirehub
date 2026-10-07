@@ -121,7 +121,7 @@
     "infoAddressValue": "کابل، افغانستان",
     "infoResponseValue": "۲۴ ساعت"
   },
-  "common": {
+    "common": {
   "loading": "در حال بارگذاری...",
   "save": "ذخیره",
   "cancel": "انصراف",
@@ -132,6 +132,10 @@
   "close": "بستن",
   "back": "بازگشت",
   "logout": "خروج",
+  "previous": "قبلی",
+  "next": "بعدی",
+  "showing": "نمایش",
+  "of": "از",
   "errorTitle": "خطایی رخ داد",
   "errorMessage": "متأسفانه مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
   "retry": "تلاش دوباره",
@@ -139,5 +143,19 @@
   "notFoundTitle": "صفحه پیدا نشد",
   "notFoundMessage": "صفحه‌ای که دنبالش هستید وجود ندارد.",
   "goHome": "رفتن به خانه"
+},
+  "applications": {
+  "title": "درخواست‌های من",
+  "found": "درخواست یافت شد",
+  "empty": "هنوز برای هیچ آگهی‌ای درخواست نداده‌اید",
+  "viewJobs": "مشاهده آگهی‌ها",
+  "applicationDate": "تاریخ درخواست",
+  "status": {
+    "PENDING": "در انتظار",
+    "REVIEWING": "در حال بررسی",
+    "INTERVIEW": "مصاحبه",
+    "REJECTED": "رد شده",
+    "HIRED": "استخدام شده"
+  }
 }
 }

@@ -132,6 +132,10 @@
   "close": "Close",
   "back": "Back",
   "logout": "Logout",
+  "previous": "Previous",
+  "next": "Next",
+  "showing": "Showing",
+  "of": "of",
   "errorTitle": "Something went wrong",
   "errorMessage": "An unexpected error occurred. Please try again.",
   "retry": "Try Again",
@@ -139,5 +143,20 @@
   "notFoundTitle": "Page Not Found",
   "notFoundMessage": "The page you're looking for doesn't exist.",
   "goHome": "Go Home"
+},
+    "applications": {
+    "title": "My Applications",
+    "found": "applications found",
+    "empty": "You haven't applied to any jobs yet",
+    "viewJobs": "View Jobs",
+    "applicationDate": "Application Date",
+    "status": {
+    "PENDING": "Pending",
+    "REVIEWING": "Reviewing",
+    "INTERVIEW": "Interview",
+    "REJECTED": "Rejected",
+    "HIRED": "Hired"
+  }
 }
+
 }
