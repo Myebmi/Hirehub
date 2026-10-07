@@ -9,6 +9,7 @@ import {
   markAllAsRead,
   clearAllNotifications,
 } from "@/actions/notification"
+import { supabase } from "@/lib/supabase"
 
 type Notification = {
   id: string
@@ -28,6 +29,7 @@ export default function NotificationBell() {
   const [loading, setLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  // ✅ بارگذاری اعلان‌ها
   async function loadNotifications() {
     const result = await getNotifications()
     if (result.success && result.notifications) {
@@ -36,12 +38,74 @@ export default function NotificationBell() {
     }
   }
 
+  // ✅ بارگذاری اولیه + Realtime
   useEffect(() => {
     loadNotifications()
-    const interval = setInterval(loadNotifications, 30000)
-    return () => clearInterval(interval)
+
+    // اگه Supabase نبود، fallback به polling
+    if (!supabase) {
+      console.warn("⚠️ Supabase Realtime disabled - using polling")
+      const interval = setInterval(loadNotifications, 60000)
+      return () => clearInterval(interval)
+    }
+
+    // ✅ Supabase Realtime
+    const channel = supabase
+      .channel("notifications-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "notifications",
+        },
+        (payload) => {
+          console.log("🔔 Realtime notification:", payload)
+
+          if (payload.eventType === "INSERT") {
+            const newNotification = payload.new as any
+
+            toast.success(newNotification.title, {
+              description: newNotification.message,
+              action: newNotification.link
+                ? {
+                    label: "مشاهده",
+                    onClick: () => router.push(newNotification.link),
+                  }
+                : undefined,
+              duration: 5000,
+            })
+
+            setNotifications((prev) => [newNotification as any, ...prev])
+            setUnreadCount((prev) => prev + 1)
+          }
+
+          if (payload.eventType === "UPDATE") {
+            const updated = payload.new as any
+            setNotifications((prev) =>
+              prev.map((n) => (n.id === updated.id ? { ...n, ...updated } : n))
+            )
+            if (updated.read) {
+              setUnreadCount((prev) => Math.max(0, prev - 1))
+            }
+          }
+
+          if (payload.eventType === "DELETE") {
+            const deleted = payload.old as any
+            setNotifications((prev) => prev.filter((n) => n.id !== deleted.id))
+          }
+        }
+      )
+      .subscribe((status) => {
+        console.log("🔌 Supabase Realtime status:", status)
+      })
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
+  // ✅ بستن dropdown با کلیک بیرون
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -54,6 +118,13 @@ export default function NotificationBell() {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
+
+  // ✅ وقتی dropdown باز می‌شه، refresh کن
+  useEffect(() => {
+    if (isOpen) {
+      loadNotifications()
+    }
+  }, [isOpen])
 
   async function handleMarkAsRead(id: string, link: string | null) {
     setLoading(true)
@@ -105,7 +176,7 @@ export default function NotificationBell() {
       >
         <span className="text-xl">🔔</span>
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white animate-pulse">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -164,7 +235,7 @@ export default function NotificationBell() {
                           {notification.title}
                         </h4>
                         {!notification.read && (
-                          <span className="h-2 w-2 rounded-full bg-blue-600" />
+                          <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
                         )}
                       </div>
                       <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
@@ -180,6 +251,22 @@ export default function NotificationBell() {
                 </div>
               ))
             )}
+          </div>
+
+          {/* ✅ Footer: نشانگر Realtime */}
+          <div className="border-t border-gray-200 p-2 text-center dark:border-gray-700">
+            <span
+              className={`inline-flex items-center gap-1 text-xs ${
+                supabase ? "text-green-600 dark:text-green-400" : "text-gray-400"
+              }`}
+            >
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  supabase ? "bg-green-500 animate-pulse" : "bg-gray-400"
+                }`}
+              />
+              {supabase ? "Realtime فعال" : "Polling mode"}
+            </span>
           </div>
         </div>
       )}
