@@ -28,7 +28,7 @@ const statusColors: Record<string, string> = {
 }
 
 const statusLabels: Record<string, string> = {
-  OPEN: "باز",
+  OPEN: "فعال",
   DRAFT: "پیش‌نویس",
   CLOSED: "بسته",
 }
@@ -46,7 +46,7 @@ export default function JobRow({ job }: { job: Job }) {
     const result = await updateJobStatus(job.id, formData)
 
     if (result.success) {
-      toast.success("وضعیت آگهی تغییر کرد ✅")
+      toast.success("وضعیت آگهی تغییر کرد")
       router.refresh()
     } else {
       toast.error("خطا", { description: result.error })
@@ -63,7 +63,7 @@ export default function JobRow({ job }: { job: Job }) {
     const result = await deleteJobAdmin(job.id)
 
     if (result.success) {
-      toast.success("آگهی حذف شد 🗑️")
+      toast.success("آگهی با موفقیت حذف شد")
       router.refresh()
     } else {
       toast.error("خطا", { description: result.error })
@@ -73,7 +73,6 @@ export default function JobRow({ job }: { job: Job }) {
 
   return (
     <div className="flex flex-col gap-4 rounded-lg bg-white p-4 shadow dark:bg-gray-800 md:flex-row md:items-center md:justify-between">
-      {/* Job Info */}
       <div className="flex-1">
         <Link
           href={`/jobs/${job.id}`}
@@ -82,14 +81,13 @@ export default function JobRow({ job }: { job: Job }) {
           {job.title}
         </Link>
         <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          📍 {job.location} — 👤 {job.recruiter.name}
+          📍 {job.location} • 👤 {job.recruiter.name}
         </div>
         <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          📨 {job._count.applications} متقاضی
+          📨 {job._count.applications} درخواست
         </div>
       </div>
 
-      {/* Status + Actions */}
       <div className="flex items-center gap-2">
         <span
           className={`rounded-full px-3 py-1 text-xs font-medium ${statusColors[job.status]}`}
@@ -103,7 +101,7 @@ export default function JobRow({ job }: { job: Job }) {
           disabled={loading}
           className="rounded-md border border-gray-300 p-1 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         >
-          <option value="OPEN">باز</option>
+          <option value="OPEN">فعال</option>
           <option value="DRAFT">پیش‌نویس</option>
           <option value="CLOSED">بسته</option>
         </select>
@@ -113,7 +111,7 @@ export default function JobRow({ job }: { job: Job }) {
           disabled={loading}
           className="rounded-md bg-red-600 px-3 py-1 text-sm text-white transition hover:bg-red-700 disabled:opacity-50"
         >
-          🗑️
+          🗑️ حذف
         </button>
       </div>
     </div>

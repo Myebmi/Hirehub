@@ -24,7 +24,7 @@ const roleColors: Record<string, string> = {
 }
 
 const roleLabels: Record<string, string> = {
-  ADMIN: "ادمین",
+  ADMIN: "مدیر",
   RECRUITER: "استخدام‌کننده",
   CANDIDATE: "کارجو",
 }
@@ -43,7 +43,7 @@ export default function UserRow({ user }: { user: User }) {
     const result = await updateUserRole(user.id, formData)
 
     if (result.success) {
-      toast.success("نقش کاربر تغییر کرد ✅")
+      toast.success("نقش کاربر با موفقیت تغییر کرد")
       router.refresh()
     } else {
       toast.error("خطا", { description: result.error })
@@ -60,7 +60,7 @@ export default function UserRow({ user }: { user: User }) {
     const result = await deleteUser(user.id)
 
     if (result.success) {
-      toast.success("کاربر حذف شد 🗑️")
+      toast.success("کاربر با موفقیت حذف شد")
       router.refresh()
     } else {
       toast.error("خطا", { description: result.error })
@@ -70,7 +70,6 @@ export default function UserRow({ user }: { user: User }) {
 
   return (
     <div className="flex flex-col gap-4 rounded-lg bg-white p-4 shadow dark:bg-gray-800 md:flex-row md:items-center md:justify-between">
-      {/* User Info */}
       <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 text-lg font-bold text-white">
           {user.name?.charAt(0) || "U"}
@@ -85,7 +84,6 @@ export default function UserRow({ user }: { user: User }) {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="flex gap-4 text-sm">
         <div>
           <span className="text-gray-500 dark:text-gray-400">آگهی: </span>
@@ -99,7 +97,6 @@ export default function UserRow({ user }: { user: User }) {
         </div>
       </div>
 
-      {/* Role Badge + Actions */}
       <div className="flex items-center gap-2">
         <span
           className={`rounded-full px-3 py-1 text-xs font-medium ${roleColors[user.role]}`}
@@ -115,7 +112,7 @@ export default function UserRow({ user }: { user: User }) {
         >
           <option value="CANDIDATE">کارجو</option>
           <option value="RECRUITER">استخدام‌کننده</option>
-          <option value="ADMIN">ادمین</option>
+          <option value="ADMIN">مدیر</option>
         </select>
 
         <button
@@ -123,7 +120,7 @@ export default function UserRow({ user }: { user: User }) {
           disabled={loading}
           className="rounded-md bg-red-600 px-3 py-1 text-sm text-white transition hover:bg-red-700 disabled:opacity-50"
         >
-          🗑️
+          🗑️ حذف
         </button>
       </div>
     </div>
