@@ -101,7 +101,9 @@ export default function NotificationBell() {
       })
 
     return () => {
-      supabase.removeChannel(channel)
+      if (supabase) {
+        supabase.removeChannel(channel)
+      }
     }
   }, [])
 
